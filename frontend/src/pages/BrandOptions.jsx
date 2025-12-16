@@ -18,7 +18,7 @@ const navigate = useNavigate();
     });
   };
 
-  const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
   e.preventDefault();
 
   console.log("Form Data:", formData);
@@ -34,13 +34,20 @@ const navigate = useNavigate();
 
     console.log("Response status:", response.status);
 
+    if (!response.ok) {
+      throw new Error("Server error");
+    }
+
     const data = await response.json();
     console.log("Response from server:", data);
 
-    // 👉 שלב 4: מעבר לדף התוצאות
+    // 🧠 נירמול: אם השרת מחזיר { result: ... }
+    const brandingResult = data.result ?? data;
+
+    // 👉 מעבר לדף הבא
     navigate("/results", {
       state: {
-        brandingResult: data,
+        brandingResult,
       },
     });
 
@@ -48,6 +55,7 @@ const navigate = useNavigate();
     console.error("FETCH ERROR:", error);
   }
 };
+
 
 
 
