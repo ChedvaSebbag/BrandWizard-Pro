@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function BrandOptions() {
   const [formData, setFormData] = useState({
@@ -7,6 +8,8 @@ export default function BrandOptions() {
     style: "",
     tone: "",
   });
+const navigate = useNavigate();
+
 
   const handleChange = (e) => {
     setFormData({ 
@@ -15,12 +18,38 @@ export default function BrandOptions() {
     });
   };
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log("Form Data:", formData);
+  const handleSubmit = async (e) => {
+  e.preventDefault();
 
-    // בשלב הבא: שליחה ל-backend → AI
-  };
+  console.log("Form Data:", formData);
+
+  try {
+    const response = await fetch("http://localhost:5000/api/branding", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+    });
+
+    console.log("Response status:", response.status);
+
+    const data = await response.json();
+    console.log("Response from server:", data);
+
+    // 👉 שלב 4: מעבר לדף התוצאות
+    navigate("/results", {
+      state: {
+        brandingResult: data,
+      },
+    });
+
+  } catch (error) {
+    console.error("FETCH ERROR:", error);
+  }
+};
+
+
 
   return (
     <div className="min-h-screen bg-gray-50 flex justify-center pt-16">

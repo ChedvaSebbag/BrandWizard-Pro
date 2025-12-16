@@ -1,7 +1,6 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.jsx";
-import BrandOptions from "./pages/BrandOptions.jsx";
-import Analysis from "./pages/Analysis.jsx";
+import Branding from "./pages/BrandOptions.jsx";
 
 
 export default function App() {
@@ -9,8 +8,7 @@ export default function App() {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/create" element={<BrandOptions />} />
-        <Route path="/analysis" element={<Analysis />} />
+        <Route path="/create" element={<Branding />} />
 
       </Routes>
     </BrowserRouter>
