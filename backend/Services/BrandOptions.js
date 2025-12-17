@@ -1,24 +1,22 @@
 
-import { GoogleGenerativeAI } from "@google/generative-ai";
+import { GoogleGenAI } from '@google/genai';
+import dotenv from "dotenv";
+dotenv.config();
+
+// Initialize Gemini AI
+const ai = new GoogleGenAI({
+  apiKey: process.env.GOOGLE_API_KEY,
+});
+
+export const generateBrandingFromAI = async ({ essence, audience, style, tone }) => {
+  console.log("API KEY:", process.env.GOOGLE_API_KEY);
+  console.log("Input data to AI:", { essence, audience, style, tone });
 
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-
-export const generateBrandingFromAI = async ({
-  essence,
-  audience,
-  style,
-  tone,
-}) => {
-
-  // ✅ מודל עדכני ונתמך
-  const model = genAI.getGenerativeModel({
-    model: "gemini-1.5-flash",
-  });
-
-  
-  const prompt = `
+const prompt = `
 # Role: You are "BrandWizard", an elite Creative Director and Brand Strategist with 20 years of experience in high-end branding.
+# You provide professional brand strategy, market analysis, and 3 distinct design concepts.
+# Respond strictly in the same language as the input (Hebrew or English).
 
 # User Input:
 **Core Essence (Business/Product)**: "${essence}"
@@ -27,61 +25,66 @@ export const generateBrandingFromAI = async ({
 **Visual Style Preference**: "${style}"
 
 # Critical Rules:
-1. **Language**: Respond strictly in the same language as the input (Hebrew or English).
-2. **NO Clichés**: You are allergic to generic ideas. If the business is a bakery, do not suggest a wheat stalk. If it's real estate, no roof outlines. Dig deeper.
-3. **Differentiation**: Your goal is to make the brand stand out. Analyze typical competitors and go the opposite direction.
+1. Analyze the market: Identify what 90% of competitors in this niche look/sound like and define the "Gap" that makes this brand distinct.
+2. Differentiation: Make the brand stand out, avoid clichés and generic ideas.
+3. Language: Respond strictly in the same language as the input.
+4. JSON output only: Do not add any text before or after the JSON. Do not omit any fields. Infer intelligently if necessary.
 
-# Task: Execute a Strategic Brand Identity Package.
+# Task:
+Create a Strategic Brand Identity Package with:
+1. **General Brand Strategy**
+2. **Exactly 3 distinct brand concepts**, each with a unique name, slogan, color palette, visual direction, and reasoning.
 
-## STEP 1: Strategic Direction
-**The "Anti-Competitor" Insight**: Briefly identify what 90% of competitors in this niche look/sound like, and define our "Gap" - how we will look distinctively different.
+# Output: Strictly valid JSON matching this schema:
 
-## STEP 2: 3 Distinct Brand Concepts
-Create 3 complete and distinct brand concepts. Each concept must have its own unique Name, Slogan, and Visual Style based on the user's input.
-
-**Naming Rules**: 
-  - Short (2-3 syllables max), trademark-able, modern.
-  - Must fit the specific concept vibe.
-**Visual Vibe (AI Prompt)**: This MUST be a technical prompt ready for Midjourney/DALL-E.
-  - Include: "Vector style", "White background", "Minimalist", "Flat design" (unless style asks for 3D), "No text inside logo".
-
-# Output: Strictly valid JSON. Do not include markdown formatting.
 {
-  "step1_strategy": {
-    "market_insight": "Competitors usually do [X], but we will do [Y] to capture the [Audience] attention.",
-    "brand_archetype": "Archetype (e.g., The Rebel, The Magician) fitting the '${tone}'.",
-    "target_audience_summary": "Psychographic insight about '${audience}'."
+  "strategy": {
+    "overview": "High-level explanation of the brand direction",
+    "market_gap": "What competitors usually do vs what makes this brand different",
+    "target_audience_insight": "Psychographic insight about the audience"
   },
-  "step2_options": [
+  "design_styles": [
     {
-      "concept_name": "Concept Name 1 (e.g., 'The Modernist')",
-      "suggested_business_name": "Name 1 (Creative & Unique)",
-      "slogan": "Slogan 1",
-      "colors": ["#Hex1", "#Hex2", "#Hex3"],
-      "reasoning": "Why this specific name and color palette work together.",
-      "visual_vibe": "logo of [object/abstract shape], [style] style, vector graphics, white background, high contrast, minimalist, centered, dribbble quality, no realistic photo details"
+      "style_id": 1,
+      "style_name": "Unique style name",
+      "brand_name": "Suggested business name",
+      "tagline": "Short slogan",
+      "color_palette": ["#000000", "#FFFFFF", "#FF9900"],
+      "visual_description": "Clear visual direction for the brand",
+      "design_reasoning": "Why this style fits the business and audience",
+      "ai_image_prompt": "Technical prompt for logo generation"
     },
     {
-      "concept_name": "Concept Name 2",
-      "suggested_business_name": "Name 2 (Different vibe)",
-      "slogan": "Slogan 2",
-      "colors": ["#Hex1", "#Hex2", "#Hex3"],
-      "reasoning": "Reasoning",
-      "visual_vibe": "logo of..."
+      "style_id": 2,
+      "style_name": "...",
+      "brand_name": "...",
+      "tagline": "...",
+      "color_palette": ["#...", "#...", "#..."],
+      "visual_description": "...",
+      "design_reasoning": "...",
+      "ai_image_prompt": "..."
     },
     {
-      "concept_name": "Concept Name 3",
-      "suggested_business_name": "Name 3 (Different vibe)",
-      "slogan": "Slogan 3",
-      "colors": ["#Hex1", "#Hex2", "#Hex3"],
-      "reasoning": "Reasoning",
-      "visual_vibe": "logo of..."
+      "style_id": 3,
+      "style_name": "...",
+      "brand_name": "...",
+      "tagline": "...",
+      "color_palette": ["#...", "#...", "#..."],
+      "visual_description": "...",
+      "design_reasoning": "...",
+      "ai_image_prompt": "..."
     }
   ]
 }
 `;
 
-  const result = await model.generateContent(prompt);
 
-  return result.response.text();
+  console.log("Sending prompt to AI...");
+  const response = await ai.models.generateContent({
+    model: 'gemini-2.5-flash',
+    contents: [{ role: 'user', parts: [{ text: prompt }] }],
+  });
+
+  console.log("AI response received:", response.text);
+  return response.text;
 };
