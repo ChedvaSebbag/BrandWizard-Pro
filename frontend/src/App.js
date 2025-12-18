@@ -2,6 +2,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Home from "./pages/Home.jsx";
 import Branding from "./pages/BrandOptions.jsx";
 import BrandResults from "./pages/BrandResults.jsx"; 
+import SelectedBrand from "./pages/SelectedBrand.jsx"; 
 
 export default function App() {
   return (
@@ -10,6 +11,7 @@ export default function App() {
         <Route path="/" element={<Home />} />
         <Route path="/create" element={<Branding />} />
         <Route path="/results" element={<BrandResults />} /> {/* <-- הוסף כאן */}
+         <Route path="/selected" element={<SelectedBrand />} />
 
       </Routes>
     </BrowserRouter>
