@@ -1,22 +1,38 @@
 // backend/Services/LogoGenerator.js
-import { GoogleGenAI } from "@google/genai";
-import dotenv from "dotenv";
-dotenv.config();
-
-const genAI = new GoogleGenAI(process.env.GOOGLE_API_KEY);
+import fetch from 'node-fetch'; // וודאי שהחבילה מותקנת: npm install node-fetch
 
 export const generateLogoImage = async (imagePrompt) => {
   try {
-    const model = genAI.getGenerativeModel({ model: "imagen-3" }); 
-
-    const result = await model.generateContent(imagePrompt);
-    const response = await result.response;
+    // 1. ניקוי הפרומפט מתווים שעלולים לשבור את ה-URL או להחשיד כבוט
+    const cleanPrompt = imagePrompt
+      .replace(/[\[\]]/g, '') // מסיר סוגריים מרובעים
+      .replace(/["']/g, '')   // מסיר גרשיים
+      .trim();
     
-    // Imagen מחזיר inlineData המכיל את ה-Base64 של התמונה
-    const base64Data = response.candidates[0].content.parts[0].inlineData.data; 
-    return base64Data; 
+    const encodedPrompt = encodeURIComponent(cleanPrompt);
+    const seed = Math.floor(Math.random() * 1000000);
+    
+    // 2. שימוש בכתובת ה-CDN הישירה שהיא לרוב יציבה יותר
+    const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&nologo=true&model=flux&seed=${seed}`;
+
+    console.log("🎨 Attempting to fetch logo from:", url);
+
+    // 3. הוספת User-Agent כדי למנוע חסימת 403/Fetch Failed
+    const response = await fetch(url, {
+      headers: {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`שרת התמונות החזיר שגיאה: ${response.status}`);
+    }
+
+    const arrayBuffer = await response.arrayBuffer();
+    return Buffer.from(arrayBuffer).toString('base64');
+    
   } catch (error) {
-    console.error("LogoGenerator Service Error:", error);
-    throw new Error("נכשלנו ביצירת הלוגו הטכני");
+    console.error("🔥 Image Fetch Error:", error.message);
+    throw error;
   }
 };

@@ -1,25 +1,31 @@
+// backend/Controllers/BrandOptions.js
 import { generateBrandingFromAI } from "../Services/BrandOptions.js";
 
 export const generateBranding = async (req, res) => {
   try {
-    console.log("📥 /api/branding body:", req.body);
-
-    // קבלת התוצאה מה-AI (string)
+    console.log("📥 Receiving branding request...");
     let resultText = await generateBrandingFromAI(req.body);
 
-    // 1️⃣ הסרת סימוני Markdown אם קיימים (```json ... ``` או ``` ... ```)
-    resultText = resultText.replace(/```json|```/g, "").trim();
+    // חילוץ ה-JSON בצורה בטוחה
+    const firstBracket = resultText.indexOf('{');
+    const lastBracket = resultText.lastIndexOf('}');
+    
+    if (firstBracket === -1 || lastBracket === -1) {
+      console.error("❌ AI Response was not JSON:", resultText);
+      throw new Error("ה-AI לא החזיר פורמט נתונים תקין");
+    }
 
-    // 2️⃣ המרה ל-JSON
-    const parsedResult = JSON.parse(resultText);
+    const cleanJson = resultText.substring(firstBracket, lastBracket + 1);
+    const parsedResult = JSON.parse(cleanJson);
 
+    console.log("✅ Branding generated and parsed successfully");
     return res.json({ result: parsedResult });
-  } catch (err) {
-    console.error("🔥 BRANDING ERROR:", err);
 
-    return res.status(500).json({
-      error: "Brand generation failed",
-      message: err.message || "Unknown error",
+  } catch (err) {
+    console.error("🔥 Controller Error:", err.message);
+    return res.status(500).json({ 
+      error: "נכשלנו ביצירת המיתוג",
+      details: err.message 
     });
   }
 };
