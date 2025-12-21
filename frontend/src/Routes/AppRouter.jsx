@@ -12,7 +12,7 @@ function AppRouter() {
         <Route path="/" element={<Home />} />
         <Route path="/brandingOptions" element={<BrandingOptions />} />
        <Route path="/brandingresults" element={<BrandResults />} />
-
+=<Route path="/brand-voice" element={<BrandVoice />} />
       </Routes>
     </BrowserRouter>
   );
