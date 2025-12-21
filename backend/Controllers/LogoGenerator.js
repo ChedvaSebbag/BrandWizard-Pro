@@ -2,14 +2,9 @@ import { generateLogoImage } from "../Services/LogoGenerator.js";
 
 export const generateLogo = async (req, res) => {
   try {
-    const { prompt } = req.body;
-    if (!prompt) {
-      return res.status(400).json({ error: "פרומפט חובה ליצירת לוגו" });
-    }
-
-    const base64Image = await generateLogoImage(prompt);
+    // התיקון: מעבירים את כל req.body (שהוא אובייקט המיתוג) לפונקציה
+    const base64Image = await generateLogoImage(req.body); 
     
-    // שליחת התשובה ללקוח
     res.json({ imageUrl: base64Image });
   } catch (error) {
     console.error("Controller Error:", error.message);
