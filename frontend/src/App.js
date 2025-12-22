@@ -5,7 +5,7 @@ import BrandResults from "./pages/BrandResults.jsx";
 import SelectedBrand from "./pages/SelectedBrand.jsx"; 
 import PosterGenerator from "./pages/PosterGenerator";
  import LandingPreview from "./pages/LandingPreview";
-  
+
 
 export default function App() {
   return (
