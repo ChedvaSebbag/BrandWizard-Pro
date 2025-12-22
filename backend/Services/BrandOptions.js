@@ -7,9 +7,10 @@ const ai = new GoogleGenAI({
 });
 
 export const generateBrandingFromAI = async ({ essence, audience, style, tone }) => {
+
 // const prompt = `
 // # Role: 
-// You are a Modern Brand Naming Expert. You create names that sound like successful Tech Startups or High-End Boutiques.
+// You are a Universal Brand Architect. You create names that are simple, premium, and have "Instant Context" – anyone hearing the name should immediately know the field of expertise, whether it is a physical product (like rugs) or an abstract service (like math).
 
 // # Input Data:
 // - Business Essence: "${essence}"
@@ -17,34 +18,26 @@ export const generateBrandingFromAI = async ({ essence, audience, style, tone })
 // - Target Audience: "${audience}"
 // - Visual Style: "${style}"
 
-// # PART 1: NAMING STRATEGY (STRICT RULES)
+// # PART 1: DYNAMIC CONTEXT RULES
 
-// RULE 1: NO SENTENCES & NO "THE"
-// - **NEVER** start a name with "The", "A", or "An".
-// - **NEVER** use gerunds (-ing words) like "Learning", "Teaching", "Thinking". They sound passive.
-// - BAD: "The Math Path", "Learning Hub".
-// - GOOD: "MathPath", "HubCore".
+// RULE 1: THE "CORE ELEMENT" IDENTIFICATION
+// Analyze "${essence}" and identify the single most recognizable element of that field:
+// - **IF PHYSICAL:** Identify the material or object (e.g., Rugs -> Silk, Knot, Wool; Bakery -> Crust, Flour, Bake).
+// - **IF SERVICE/ABSTRACT:** Identify the symbol, tool, or action (e.g., Math -> Plus, Point, Solve, Math; Optics -> View, Glass, Look).
+// - **MANDATORY:** One part of the name MUST use this "Core Element" or a very close synonym in simple English.
 
-// RULE 2: THE "FUSION" FORMULA
-// - The best names are 2 short nouns merged together (CamelCase).
-// - **Formula:** [Anchor Noun] + [Elevator Noun]
-// - If Tone is "Calm/Realistic" -> Use: Base, Core, Axis, True, Logic, Mind, Flow.
-// - If Tone is "Luxury" -> Use: Gold, Prime, Noble, Elite.
-// - **Example:** "Logic" + "Base" = "LogicBase".
+// RULE 2: NO "GHOST" NAMES (STRICT FORBIDDEN LIST)
+// - **NEVER** use words that provide zero industry context: Core, Base, Link, Maven, Prime, Elite, Logic, True, Form, Line, Apex, Global, System, Next, Plus (unless it's math).
+// - **WHY:** These words create "Ghost Brands" that look like generic software or consulting firms.
 
-// RULE 3: HEBREW TRANSLITERATION (CRITICAL)
-// - The field 'brand_name_hebrew' must be a **Phonetic Transliteration**.
-// - Write exactly how the English name sounds in Hebrew letters.
-// - **DO NOT TRANSLATE THE MEANING.**
-// - Example: If name is "LogicBase":
-//   - CORRECT Hebrew: "לוג'יק-בייס"
-//   - WRONG Hebrew: "בסיס הלוגיקה" (Do not do this!)
+// RULE 3: INTERNATIONAL & SIMPLE (12-YEAR-OLD TEST)
+// - Use only common words that are easy for non-native speakers to pronounce and understand.
+// - Format: [Core Element] + [Simple Value/Vibe Word] (e.g., "MathStar", "SilkArt", "CakePro").
 
-// # PART 2: VISUAL STRATEGY
-// For 'extended_designer_style', write a **Rich Visual Brief (3-4 sentences)**.
-// - Describe the geometry, material, lighting, and mood.
-// - Start with: "A premium vector logo featuring..."
-// - Ensure it fits the requested style ("${style}").
+// # PART 2: VISUAL CLARITY (NO GENERIC ICONS)
+// - In 'extended_designer_style', you MUST focus EXCLUSIVELY on the physical attributes or symbols of "${essence}".
+// - **STRICTLY FORBIDDEN:** Do not include icons of houses, buildings, or generic corporate globes.
+// - **FOCUS:** Describe specific textures (for products) or specific symbols (for services).
 
 // # Output Format (JSON):
 // Return ONLY a strictly valid JSON. 
@@ -52,47 +45,47 @@ export const generateBrandingFromAI = async ({ essence, audience, style, tone })
 
 // {
 //   "strategy": {
-//     "overview": "ניתוח אסטרטגי: למה בחרנו בגישה הזו (בעברית).",
-//     "market_gap": "הזדמנות: הבידול של המותג (בעברית).",
+//     "overview": "ניתוח אסטרטגי: איך השם מחבר את הלקוח לליבת העסק (בעברית).",
+//     "market_gap": "הזדמנות: למה שם ממוקד תחום עדיף על שם כללי (בעברית).",
 //     "target_audience_insight": "תובנה על הקהל (בעברית)."
 //   },
 //   "design_styles": [
 //     {
 //       "style_id": 1,
-//       "style_name": "Name of the Vibe (e.g., Structured Clarity)",
-//       "brand_name_english": "EnglishName (Short & Punchy)",
-//       "brand_name_hebrew": "תעתיק פונטי (למשל: לוג'יק-בייס)",
+//       "style_name": "Industry Precision",
+//       "brand_name_english": "EnglishName (Simple & Relevant)",
+//       "brand_name_hebrew": "תעתיק פונטי",
 //       "tagline": "סלוגן קצר וקולע (בעברית)",
 //       "color_palette": ["#HEX1", "#HEX2", "#HEX3"],
-//       "design_reasoning": "הסבר: למה השם הזה קליט ומשדר את הטון הנכון (בעברית).",
-//       "extended_designer_style": "ENGLISH ONLY: A detailed 3-4 sentence prompt for the logo..."
+//       "design_reasoning": "הסבר למה השם הזה משייך את העסק מיד לתחום ה[industry] ולא נשמע כללי (בעברית).",
+//       "extended_designer_style": "ENGLISH ONLY: A detailed 3-4 sentence prompt for the logo. Focus on specific symbols/textures of the industry. NO GENERIC ICONS like houses or office buildings."
 //     },
 //     {
 //       "style_id": 2,
-//       "style_name": "Name of the Vibe",
+//       "style_name": "Clean Modernity",
 //       "brand_name_english": "...",
 //       "brand_name_hebrew": "...",
 //       "tagline": "...",
 //       "color_palette": ["#...", "#...", "#..."],
 //       "design_reasoning": "...",
-//       "extended_designer_style": "ENGLISH ONLY: ..."
+//       "extended_designer_style": "..."
 //     },
 //     {
 //       "style_id": 3,
-//       "style_name": "Name of the Vibe",
+//       "style_name": "Premium Touch",
 //       "brand_name_english": "...",
 //       "brand_name_hebrew": "...",
 //       "tagline": "...",
 //       "color_palette": ["#...", "#...", "#..."],
 //       "design_reasoning": "...",
-//       "extended_designer_style": "ENGLISH ONLY: ..."
+//       "extended_designer_style": "..."
 //     }
 //   ]
 // }
 // `.trim();
 const prompt = `
 # Role: 
-You are a Universal Brand Naming Expert. You create names for ANY industry (from high-tech to local bakeries) using **Simple, International English**.
+You are a High-End Brand Naming Expert & Visual Strategist. Your goal is to create names that are punchy, premium, and provide "Instant Recognition" – the moment someone hears the name or sees the logo, they must know EXACTLY what is being sold.
 
 # Input Data:
 - Business Essence: "${essence}"
@@ -100,36 +93,31 @@ You are a Universal Brand Naming Expert. You create names for ANY industry (from
 - Target Audience: "${audience}"
 - Visual Style: "${style}"
 
-# PART 1: NAMING STRATEGY (STRICT RULES)
+# PART 1: THE "INSTANT RECOGNITION" NAMING RULES
 
-RULE 1: VOCABULARY LEVEL (THE "12-YEAR-OLD TEST")
-- **CRITICAL:** Use ONLY English words that are in the "Top 1000 most common words".
-- **TEST:** If an average 12-year-old in a non-English speaking country doesn't know the word, **DO NOT USE IT**.
-- **Bad (Too Complex):** "Apex", "Vertex", "Ocular", "Celestial", "Maven", "Vellum".
-- **Good (Simple):** "Top", "Point", "Eye", "Sky", "Pro", "Paper", "Star", "Gold".
+RULE 1: THE PRODUCT DNA (MANDATORY ANCHOR)
+Identify the single most iconic physical object or material of "${essence}". 
+- **MANDATORY:** One part of the name MUST use this "Anchor" word. 
+- **If Rugs:** Silk, Knot, Weave, Rug, Thread. (NEVER use "Home" or "House").
+- **If Food:** Chef, Taste, Bake, Crust, Feast, Grill. (NEVER use "Saturday" or "Table").
+- **If Optics:** Lens, Glass, View, Look, Sight.
+- **If Math:** Math, Solve, Point, Plus.
 
-RULE 2: DYNAMIC FUSION (ADAPT TO THE BUSINESS)
-- Do NOT use a fixed list of words. You must generate words based on the "${essence}".
-- **Step A:** Extract 1 simple noun related to the specific product (e.g., for Shoes -> "Step", "Walk", "Run"; for Pizza -> "Crust", "Hot", "Slice").
-- **Step B:** Extract 1 simple value word (e.g., "Best", "Top", "Pro", "Art", "Pure", "Fine").
-- **Step C:** Merge them (CamelCase).
-- **Result Examples:**
-  - "WalkPro" (Shoes)
-  - "HotSlice" (Pizza)
-  - "CodeFlow" (Software)
-  - "HomeStar" (Real Estate)
+RULE 2: NO "GHOST" OR "REAL ESTATE" WORDS
+- **STRICTLY FORBIDDEN:** Core, Base, Link, Maven, Prime, Elite, Logic, True, Form, Line, Apex, Global, System, Next, Home, House, Place, Studio.
+- **WHY:** These words hide the product. We want to SHOW the product.
 
-RULE 3: HEBREW TRANSLITERATION
-- The field 'brand_name_hebrew' must be a **Phonetic Transliteration**.
-- Write exactly how the English name sounds in Hebrew letters.
-- **DO NOT TRANSLATE THE MEANING.**
-- Example: "WalkPro" -> "וואלק-פרו" (NOT "הליכה מקצועית").
+RULE 3: TWO-SYLLABLE PUNCH
+- Keep names short and powerful. 
+- Use "International English" that is phonetically natural in Hebrew.
+- Format: [Product DNA Word] + [Simple Quality Word] (e.g., "SilkArt", "BakePro", "LensGold").
 
-# PART 2: VISUAL STRATEGY
-For 'extended_designer_style', write a **Rich Visual Brief (3-4 sentences)**.
-- Describe the geometry, material, lighting, and mood.
-- Start with: "A premium vector logo featuring..."
-- Ensure it fits the requested style ("${style}") and the specific business type.
+# PART 2: THE PRODUCT-DRIVEN VISUAL BRIEF
+In 'extended_designer_style', you must provide a **6-8 sentence prompt** that anchors the logo in the product's physical reality.
+- **Focus:** Describe the microscopic textures and specific shapes of the product (e.g., "the interlocking pattern of rug fibers", "the golden crystalline structure of sea salt on grilled meat").
+- **Lighting:** Use professional studio lighting (Soft-box, Rembrandt lighting) to highlight materials.
+- **Camera:** Use Macro or Close-up angles to show craftsmanship.
+- **STRICTLY FORBIDDEN:** Absolutely no icons of houses, general buildings, or generic human silhouettes. Focus 100% on the product itself.
 
 # Output Format (JSON):
 Return ONLY a strictly valid JSON. 
@@ -137,41 +125,23 @@ NOTE: 'strategy', 'reasoning', 'tagline' -> MUST BE IN HEBREW.
 
 {
   "strategy": {
-    "overview": "ניתוח אסטרטגי (בעברית).",
-    "market_gap": "הזדמנות (בעברית).",
+    "overview": "ניתוח אסטרטגי: איך השם והלוגו מחברים את הלקוח ישירות למוצר ה[essence] (בעברית).",
+    "market_gap": "הזדמנות: למה זיהוי מיידי של המוצר בשם ובצורה ינצח את המתחרים הגנריים (בעברית).",
     "target_audience_insight": "תובנה על הקהל (בעברית)."
   },
   "design_styles": [
     {
       "style_id": 1,
-      "style_name": "Name of the Vibe",
-      "brand_name_english": "EnglishName (Simple & Relevant)",
-      "brand_name_hebrew": "תעתיק פונטי (למשל: סופט-הום)",
-      "tagline": "סלוגן קצר (בעברית)",
+      "style_name": "Pure Product Identity",
+      "brand_name_english": "EnglishName",
+      "brand_name_hebrew": "תעתיק פונטי",
+      "tagline": "סלוגן קצר שמסביר בדיוק מה זה (בעברית)",
       "color_palette": ["#HEX1", "#HEX2", "#HEX3"],
-      "design_reasoning": "הסבר: למה השם הזה מתאים בול לעסק הזה וקל להבנה (בעברית).",
-      "extended_designer_style": "ENGLISH ONLY: A detailed 3-4 sentence prompt for the logo..."
+      "design_reasoning": "הסבר למה השם הזה והאלמנטים הוויזואליים שנבחרו הופכים את העסק למזוהה מיידית (בעברית).",
+      "extended_designer_style": "ENGLISH ONLY: A hyper-detailed 6-8 sentence prompt. Focus exclusively on the material textures, microscopic details, and physical attributes of the product. NO GENERIC ICONS, HOUSES, OR BUILDINGS."
     },
-    {
-      "style_id": 2,
-      "style_name": "Name of the Vibe",
-      "brand_name_english": "...",
-      "brand_name_hebrew": "...",
-      "tagline": "...",
-      "color_palette": ["#...", "#...", "#..."],
-      "design_reasoning": "...",
-      "extended_designer_style": "ENGLISH ONLY: ..."
-    },
-    {
-      "style_id": 3,
-      "style_name": "Name of the Vibe",
-      "brand_name_english": "...",
-      "brand_name_hebrew": "...",
-      "tagline": "...",
-      "color_palette": ["#...", "#...", "#..."],
-      "design_reasoning": "...",
-      "extended_designer_style": "ENGLISH ONLY: ..."
-    }
+    { "style_id": 2, "style_name": "...", "brand_name_english": "...", "extended_designer_style": "..." },
+    { "style_id": 3, "style_name": "...", "brand_name_english": "...", "extended_designer_style": "..." }
   ]
 }
 `.trim();

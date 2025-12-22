@@ -167,51 +167,37 @@ import fetch from "node-fetch";
 
 export const createPosters = async (brandingData) => {
   try {
-    const {
-      businessName,
-      visualStyle,
-      essence, // כאן נמצא "מאפייה", "שטיחים", "תאורה" וכו'
-      colors,
-    } = brandingData;
+    const { businessName, visualStyle, essence, colors, tagline } = brandingData;
 
-    const colorsText = colors?.join(" and ") || "brand colors";
+    const colorsText = colors?.join(", ") || "professional brand colors";
 
-    // הנחיות בסיס: תמונה נקייה ללא טקסט וללא אנשים
-    const basePrompt = `
-      Professional commercial product photography.
-      STRICTLY NO TEXT. NO WORDS. NO PEOPLE. 
-      The image MUST be directly related to the business of: ${essence}.
-      Color Palette: ${colorsText}.
-      Style: ${visualStyle}.
-    `;
+    // הנחיות קשיחות למניעת תמונות לא קשורות
+    const baseVisualRules = `
+      Professional commercial advertising photography. 
+      The core subject of this image MUST be directly related to: "${essence}" for a business named "${businessName}".
+      Environment: A premium, realistic setting that reflects the industry of "${essence}".
+      Color Palette: Dominant use of ${colorsText}.
+      STRICTLY NO PEOPLE. NO FACES. NO TEXT.
+      Style: ${visualStyle}, high-end, 8k resolution, cinematic lighting.
+    `.trim();
 
-    // שלוש וריאציות שתמיד עובדות, לא משנה מה העסק
     const styles = [
-      // 1. המוצר בתוך סביבה טבעית (למשל: לחם במאפייה, שטיח בסלון, מנורה במשרד)
-      `${basePrompt} Subject: A high-end display of ${essence} in its natural professional environment. 
-       Beautiful lighting, cinematic composition, architectural photography style, 8k resolution.`,
-      
-      // 2. תקריב אומנותי (Macro/Detail) - מתמקד בחומר ובאיכות
-      `${basePrompt} Subject: Extreme close-up shot focusing on the fine details and textures of ${essence}. 
-       Soft shadows, premium material feel, studio lighting, elegant depth of field.`,
-      
-      // 3. הצגה נקייה בסטודיו (Minimalist/Studio) - מראה פרסומי נקי
-      `${basePrompt} Subject: ${essence} presented elegantly in a minimalist professional studio setting. 
-       Clean background, sophisticated lighting, luxury advertising photography style.`
+      `${baseVisualRules} Concept: A hero product/service shot. Focus on the tools or the result of "${essence}". Minimalist and clean background.`,
+      `${baseVisualRules} Concept: Atmospheric craftsmanship detail. Macro shot focusing on the textures and materials associated with "${essence}".`,
+      `${baseVisualRules} Concept: Modern workspace/environment. A wide-angle shot of a space where "${essence}" happens, conveying professional excellence.`
     ];
 
-    console.log(`🖼️ Generating Posters for: ${essence}...`);
+    console.log(`🖼️ Generating hyper-relevant posters for: ${essence}`);
 
-    const seeds = [Math.floor(Math.random() * 500), Math.floor(Math.random() * 500) + 1000, Math.floor(Math.random() * 500) + 2000];
+    const seeds = [Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000) + 1111, Math.floor(Math.random() * 1000) + 2222];
 
     const results = await Promise.allSettled(
       styles.map(async (stylePrompt, index) => {
         const encoded = encodeURIComponent(stylePrompt.trim());
         const url = `https://image.pollinations.ai/prompt/${encoded}?width=768&height=1024&nologo=true&seed=${seeds[index]}&model=flux&enhance=true`;
 
-        const response = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" } });
-        
-        if (!response.ok) throw new Error(`Fetch failed: ${response.status}`);
+        const response = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" }, timeout: 30000 });
+        if (!response.ok) throw new Error(`API Status ${response.status}`);
         
         const buffer = await response.arrayBuffer();
         return {
@@ -221,16 +207,13 @@ export const createPosters = async (brandingData) => {
       })
     );
 
-    const images = results
-      .filter(r => r.status === "fulfilled")
-      .map(r => r.value);
-
-    if (images.length === 0) throw new Error("Failed to generate posters");
+    const images = results.filter(r => r.status === "fulfilled").map(r => r.value);
+    if (images.length === 0) throw new Error("Could not generate relevant posters");
 
     return images;
 
   } catch (error) {
-    console.error("🔥 Poster Error:", error.message);
+    console.error("🔥 Strategic Poster Error:", error.message);
     throw error;
   }
 };
