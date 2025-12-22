@@ -97,6 +97,20 @@ export default function PosterGenerator() {
           </button>
         </div>
 
+<button
+  onClick={() =>
+    navigate("/landing-preview", {
+      state: {
+        brandingData,
+        posters
+      }
+    })
+  }
+  className="mt-10 px-8 py-4 bg-indigo-600 text-white rounded-xl"
+>
+  צור דף נחיתה לעסק
+</button>
+
         {error && (
           <p className="mt-6 text-red-600 font-medium">{error}</p>
         )}

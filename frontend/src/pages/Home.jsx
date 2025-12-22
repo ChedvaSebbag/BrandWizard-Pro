@@ -1,58 +1,55 @@
-import { Link } from "react-router-dom";
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function Home() {
+  const [businessName, setBusinessName] = useState("");
+  const navigate = useNavigate();
+
+  const handleStart = () => {
+    if (!businessName.trim()) return;
+
+    navigate("/create", {
+      state: { businessName }
+    });
+  };
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-slate-950 via-slate-900 to-slate-800 text-white">
       <div className="max-w-3xl text-center px-6">
 
-        {/* Eyebrow */}
-        <span className="inline-block mb-6 px-4 py-1 text-sm tracking-wide uppercase rounded-full bg-white/5 text-slate-300 border border-white/10">
+        <span className="inline-block mb-6 px-4 py-1 text-sm uppercase rounded-full bg-white/5 text-slate-300 border border-white/10">
           AI Brand Strategy Studio
         </span>
 
-        {/* Main Title */}
-        <h1 className="text-5xl md:text-6xl font-extrabold tracking-tight mb-8 leading-tight">
+        <h1 className="text-5xl md:text-6xl font-extrabold mb-8">
           Brand<span className="text-indigo-400">Wizard</span>
         </h1>
 
-        {/* Subtitle */}
-        <p className="text-lg md:text-xl text-slate-300 mb-12 leading-relaxed">
-          Build a complete brand identity —
-          <br className="hidden sm:block" />
-          strategy, tone and visual direction,
-          <span className="text-white font-medium"> in minutes.</span>
+        <p className="text-lg text-slate-300 mb-10">
+          Build a complete brand identity in minutes.
         </p>
 
-        {/* CTA */}
-        <Link
-          to="/create"
-          className="
-            inline-flex
-            items-center
-            gap-3
-            px-10
-            py-4
-            bg-indigo-600
-            text-white
-            text-lg
-            font-semibold
-            rounded-2xl
-            shadow-[0_20px_40px_-15px_rgba(99,102,241,0.6)]
-            hover:bg-indigo-500
-            hover:scale-105
-            transition-all
-            duration-300
-          "
-        >
-          Start Creating
-          <span className="text-xl">→</span>
-        </Link>
+        {/* ✨ חדש – שם עסק */}
+        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <input
+            type="text"
+            placeholder="Business name"
+            value={businessName}
+            onChange={(e) => setBusinessName(e.target.value)}
+            className="px-5 py-4 rounded-xl text-slate-900 w-64"
+          />
 
-        {/* Footer note */}
+          <button
+            onClick={handleStart}
+            className="px-8 py-4 bg-indigo-600 rounded-xl font-semibold hover:bg-indigo-500 transition"
+          >
+            Start Creating →
+          </button>
+        </div>
+
         <p className="mt-10 text-sm text-slate-400">
           No templates. No guesswork. Just smart branding.
         </p>
-
       </div>
     </div>
   );
