@@ -1,15 +1,13 @@
 import dotenv from "dotenv";
 dotenv.config();
-console.log("🔑 GEMINI FROM APP:", process.env.GEMINI_API_KEY);
+process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
 
 import express from "express";
 import cors from "cors";
 
 import brandingRoute from "./Routes/BrandOptions.js";
 import logoRoutes from "./Routes/LogoGenerator.js";
-
-// ... שאר ההגדרות של השרת (express.json וכדומה)
-
+import postersRoutes from "./Routes/postersGenerator.js"; // ✅ חדש
 
 const app = express();
 
@@ -18,6 +16,7 @@ app.use(express.json());
 
 app.use("/api", logoRoutes);
 app.use("/api/branding", brandingRoute);
+app.use("/api/posters", postersRoutes); // ✅ חובה
 
 const PORT = process.env.PORT || 5000;
 

@@ -85,27 +85,54 @@ export default function SelectedBrand() {
                 <span className="text-slate-400">התמונה בטעינה...</span>
               )}
             </div>
-            <div className="space-y-4">
-              <button 
-                onClick={() => window.print()} 
-                disabled={!logo}
-                className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-semibold hover:bg-indigo-700 disabled:opacity-50 transition-colors"
-              >
-                הורדת לוגו / הדפסה
-              </button>
-              <button 
-                onClick={handleRetry} 
-                className="w-full py-3 text-slate-500 rounded-2xl border hover:bg-slate-100 transition-colors"
-              >
-                יצירה מחדש
-              </button>
-              <button 
-                onClick={() => navigate(-1)} 
-                className="w-full py-2 text-indigo-600 font-medium hover:underline"
-              >
-                חזרה לבחירת סגנון אחר
-              </button>
-            </div>
+           <div className="space-y-4">
+  <button 
+    onClick={() => window.print()} 
+    disabled={!logo}
+    className="w-full py-4 bg-indigo-600 text-white rounded-2xl font-semibold hover:bg-indigo-700 disabled:opacity-50 transition-colors"
+  >
+    הורדת לוגו / הדפסה
+  </button>
+
+  {/* 🔹 כפתור שלב הבא – יצירת פוסטרים */}
+  <button
+    onClick={() =>
+      navigate("/posters", {
+        state: {
+          businessName: selectedConcept.brand_name_english,
+          businessDescription: userInput.essence,
+          targetAudience: userInput.audience,
+          visualStyle: userInput.style,
+          tone: userInput.tone,
+          essence: selectedConcept.style_name,
+          tagline: selectedConcept.tagline,
+          extendedStyle: selectedConcept.extended_designer_style,
+          colors: selectedConcept.color_palette,
+          logo: logo
+        }
+      })
+    }
+    disabled={!logo}
+    className="w-full py-4 bg-emerald-600 text-white rounded-2xl font-semibold hover:bg-emerald-700 disabled:opacity-50 transition-colors"
+  >
+    אהבתי, בוא נמשיך
+  </button>
+
+  <button 
+    onClick={handleRetry} 
+    className="w-full py-3 text-slate-500 rounded-2xl border hover:bg-slate-100 transition-colors"
+  >
+    יצירה מחדש
+  </button>
+
+  <button 
+    onClick={() => navigate(-1)} 
+    className="w-full py-2 text-indigo-600 font-medium hover:underline"
+  >
+    חזרה לבחירת סגנון אחר
+  </button>
+</div>
+
           </>
         )}
       </div>
