@@ -9,82 +9,89 @@ const ai = new GoogleGenAI({
 export const generateBrandingFromAI = async ({ essence, audience, style, tone }) => {
 const prompt = `
 # Role: 
-You are a World-Class Brand Strategist and Creative Director. Your expertise is "Visual Storytelling" and "High-End Phonetic Branding". You create brands that feel like global luxury boutiques (e.g., Apple, Aesop, Voda).
+You are a Modern Brand Naming Expert. You create names that sound like successful Tech Startups or High-End Boutiques.
 
-# Objective:
-Create EXACTLY 3 distinct, premium brand concepts. 
+# Input Data:
+- Business Essence: "${essence}"
+- Desired Tone: "${tone}"
+- Target Audience: "${audience}"
+- Visual Style: "${style}"
 
-# Naming Strategy (CRITICAL):
-STRICTLY AVOID clichés and generic Hebrew nouns (e.g., No 'Ohr', 'Bracha', 'Keter', 'Nof', 'Chesed', 'Marom'). These are forbidden.
+# PART 1: NAMING STRATEGY (STRICT RULES)
 
-Instead, use these 3 distinct naming styles:
-1. **Abstract & Melodic**: Focus on the SOUND and "Mouthfeel". Use soft consonants and premium vowels (e.g., 'Vellon', 'Lume', 'Nura', 'Aura').
-2. **Modern Roots**: Use ancient or natural Hebrew/Latin roots but twist them into a modern, short format (e.g., instead of 'Erez', use 'Arze'; instead of 'Grains', use 'Grano').
-3. **Symbolic Metaphor**: A short, powerful word that represents an feeling or a secret, not the product (e.g., 'Sela', 'Voda', 'Crest').
+RULE 1: NO SENTENCES & NO "THE"
+- **NEVER** start a name with "The", "A", or "An".
+- **NEVER** use gerunds (-ing words) like "Learning", "Teaching", "Thinking". They sound passive.
+- BAD: "The Math Path", "Learning Hub".
+- GOOD: "MathPath", "HubCore".
 
-Naming Rules:
-- Length: 4-6 letters only.
-- Feel: Must look beautiful on a minimalist black/gold label.
-- Phonetic Harmony: "brand_name_hebrew" and "brand_name_english" MUST sound identical.
+RULE 2: THE "FUSION" FORMULA
+- The best names are 2 short nouns merged together (CamelCase).
+- **Formula:** [Anchor Noun] + [Elevator Noun]
+- If Tone is "Calm/Realistic" -> Use: Base, Core, Axis, True, Logic, Mind, Flow.
+- If Tone is "Luxury" -> Use: Gold, Prime, Noble, Elite.
+- **Example:** "Logic" + "Base" = "LogicBase".
 
-# The "Soul" of Design (Extended Designer Style):
-Describe the **Visual Poetry** in ENGLISH (This will be used for AI Image Generation):
-- **Visual Metaphor**: Do NOT describe the product (no bread for bakery, no plates for food). Describe a shape that represents the SOUL (e.g., "A single, unbroken golden line forming a Zen-like circle").
-- **Visual Tension**: Use terms: Golden Ratio, Negative Space, Fibonacci, Geometric Minimalism, High-contrast Serifs.
-- **Atmosphere**: Describe lighting and texture (e.g., "Deep matte textures with soft cinematic shadows").
+RULE 3: HEBREW TRANSLITERATION (CRITICAL)
+- The field 'brand_name_hebrew' must be a **Phonetic Transliteration**.
+- Write exactly how the English name sounds in Hebrew letters.
+- **DO NOT TRANSLATE THE MEANING.**
+- Example: If name is "LogicBase":
+  - CORRECT Hebrew: "לוג'יק-בייס"
+  - WRONG Hebrew: "בסיס הלוגיקה" (Do not do this!)
 
-# User Input:
-Core Essence: "${essence}"
-Tone: "${tone}"
-Target Audience: "${audience}"
-Visual Style: "${style}"
+# PART 2: VISUAL STRATEGY
+For 'extended_designer_style', write a **Rich Visual Brief (3-4 sentences)**.
+- Describe the geometry, material, lighting, and mood.
+- Start with: "A premium vector logo featuring..."
+- Ensure it fits the requested style ("${style}").
 
-# Output:
-Return ONLY a strictly valid JSON.
+# Output Format (JSON):
+Return ONLY a strictly valid JSON. 
+NOTE: 'strategy', 'reasoning', 'tagline' -> MUST BE IN HEBREW.
 
 {
   "strategy": {
-    "overview": "ניתוח אסטרטגי עמוק של המותג (בעברית).",
-    "market_gap": "הפער בשוק שהמותג הזה ממלא (בעברית).",
-    "target_audience_insight": "תובנה פסיכולוגית על קהל היעד (בעברית)."
+    "overview": "ניתוח אסטרטגי: למה בחרנו בגישה הזו (בעברית).",
+    "market_gap": "הזדמנות: הבידול של המותג (בעברית).",
+    "target_audience_insight": "תובנה על הקהל (בעברית)."
   },
   "design_styles": [
     {
       "style_id": 1,
-      "style_name": "Minimalist Prestige",
-      "brand_name_hebrew": "שם המותג בעברית",
-      "brand_name_english": "The Name in English",
-      "tagline": "סלוגן קצר וקולע בעברית",
+      "style_name": "Name of the Vibe (e.g., Structured Clarity)",
+      "brand_name_english": "EnglishName (Short & Punchy)",
+      "brand_name_hebrew": "תעתיק פונטי (למשל: לוג'יק-בייס)",
+      "tagline": "סלוגן קצר וקולע (בעברית)",
       "color_palette": ["#HEX1", "#HEX2", "#HEX3"],
-      "design_reasoning": "למה השם הזה הוא יצירת אמנות ואיך הוא מתחבר למהות העסק (בעברית).",
-      "extended_designer_style": "ENGLISH ONLY: Professional prompt for DALL-E/Midjourney. Describe an abstract, geometric, luxurious logo mark. Mention: vector, white background, golden ratio, minimalist."
+      "design_reasoning": "הסבר: למה השם הזה קליט ומשדר את הטון הנכון (בעברית).",
+      "extended_designer_style": "ENGLISH ONLY: A detailed 3-4 sentence prompt for the logo..."
     },
     {
       "style_id": 2,
-      "style_name": "Organic Heritage",
-      "brand_name_hebrew": "...",
+      "style_name": "Name of the Vibe",
       "brand_name_english": "...",
+      "brand_name_hebrew": "...",
       "tagline": "...",
       "color_palette": ["#...", "#...", "#..."],
       "design_reasoning": "...",
-      "extended_designer_style": "..."
+      "extended_designer_style": "ENGLISH ONLY: ..."
     },
     {
       "style_id": 3,
-      "style_name": "Modern Iconic",
-      "brand_name_hebrew": "...",
+      "style_name": "Name of the Vibe",
       "brand_name_english": "...",
+      "brand_name_hebrew": "...",
       "tagline": "...",
       "color_palette": ["#...", "#...", "#..."],
       "design_reasoning": "...",
-      "extended_designer_style": "..."
+      "extended_designer_style": "ENGLISH ONLY: ..."
     }
   ]
 }
 `.trim();
-
   const response = await ai.models.generateContent({
-    model: 'gemini-2.5-flash',
+    model: 'gemini-flash-latest',
     contents: [{ role: 'user', parts: [{ text: prompt }] }],
   });
 
