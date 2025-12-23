@@ -161,72 +161,51 @@
 //   }
 // };
 
-
 import fetch from "node-fetch";
 
 export const createPosters = async (brandingData) => {
   try {
-    const { 
-      businessName, businessDescription, visualStyle, 
-      tone, essence, colors, tagline 
-    } = brandingData;
+    const { businessName, businessDescription, visualStyle, colors, essence, tagline } = brandingData;
+    const colorsText = colors?.join(", ") || "vibrant colors";
 
-    const colorsText = colors?.join(", ") || "professional brand colors";
-
-    // --- הנחיות הליבה: שילוב לוגו, רלוונטיות ואיכות CGI ---
+    // הפרומפט המפורט ששומר על איכות גבוהה ורלוונטיות
     const baseVisualRules = `
-      Role: World-Class Commercial Photographer and Brand Strategist.
-      Task: Create a high-end advertising poster for "${businessName}" based on "${businessDescription}".
+      Role: Senior Creative Director & Commercial Photographer.
+      Task: Create a high-end advertising background for "${businessName}".
       
-      STRICT LOGO INTEGRATION: 
-      The name "${businessName}" must be rendered as high-end 3D typography INTEGRATED into the scene. 
-      It should look like a laser-etched metal sign, an embossed leather mark, or a sleek transparent glass overlay. 
-      STRICTLY NO WHITE BOXES or solid rectangular backgrounds around the text. The text must catch the scene's light and shadows.
-
-      INDUSTRY RELEVANCE: 
-      The visual MUST be a direct representation of "${businessDescription}". 
-      If the business is Rugs, focus on intricate hand-knotted textures and woven fibers. 
-      If the business is Woodwork, focus on joinery and raw timber grain. 
-      The imagery must be hyper-relevant to the craft.
-
-      COMPOSITION & QUALITY:
-      Cinematic studio lighting, global illumination, and professional depth of field. 
-      STRICTLY NO PEOPLE. NO HUMANS. NO FACES.
-      Color Palette: Optimized using ${colorsText}.
-      Resolution: 8k, photorealistic, ${visualStyle} aesthetic.
+      --- RELEVANCE ---
+      The business is: "${businessDescription}".
+      The imagery MUST feature physical items related to "${essence}". 
+      (Example: If a toy store, show high-quality wooden blocks, puzzles, and colorful cubes).
+      
+      --- DESIGN & QUALITY ---
+      Style: ${visualStyle}, 8k resolution, photorealistic CGI.
+      Lighting: Cinematic studio lighting.
+      Color Palette: ${colorsText}.
+      
+      --- STRICTURES ---
+      STRICTLY NO TEXT, NO LETTERS, NO LOGOS in the generated image. 
+      STRICTLY NO PEOPLE, NO HUMANS, NO FACES.
+      Leave the central area clear for overlaying branding.
     `.trim();
 
-    // --- שלושה קונספטים שיווקיים שונים ---
     const styles = [
-      // 1. קונספט המקרו (התמקדות בחומר ובאיכות)
-      `${baseVisualRules} 
-       Concept: The Texture of Excellence. A macro close-up shot of the raw materials and craftsmanship of "${essence}". 
-       Focus on extreme detail (e.g., woven knots, polished surfaces). The tagline "${tagline}" is elegantly placed in the negative space.`,
-      
-      // 2. קונספט ה"הירו" (המוצר כמרכז העולם)
-      `${baseVisualRules} 
-       Concept: The Hero Product Shot. A grand, symmetrical presentation of a premium product from "${businessDescription}" as the centerpiece. 
-       Dramatic lighting creates a sense of luxury and status. The name "${businessName}" appears as a premium metallic brand mark on the surface.`,
-      
-      // 3. קונספט האווירה והטון (הרגש של המותג)
-      `${baseVisualRules} 
-       Concept: Atmospheric Essence. An evocative, artistic scene that captures the spirit of "${essence}". 
-       Use dynamic lighting and shadows from the ${colorsText} palette to create a prestigious, clean environment. The composition is minimal and impactful.`
+      `${baseVisualRules} Concept: Focus on the craftsmanship and textures of ${essence}.`,
+      `${baseVisualRules} Concept: A hero shot of core items from ${businessDescription} in a clean setting.`,
+      `${baseVisualRules} Concept: Atmospheric and artistic representation of the brand's world.`
     ];
 
-    console.log(`🖼️ Generating 3 hyper-professional posters for: ${businessName}`);
-
-    const seeds = [Math.floor(Math.random() * 99999), Math.floor(Math.random() * 99999) + 1, Math.floor(Math.random() * 99999) + 2];
-
     const results = await Promise.allSettled(
-      styles.map(async (stylePrompt, index) => {
-        const encoded = encodeURIComponent(stylePrompt.trim());
-        const url = `https://image.pollinations.ai/prompt/${encoded}?width=768&height=1024&nologo=true&seed=${seeds[index]}&model=flux&enhance=true`;
+      styles.map(async (prompt, index) => {
+        const encoded = encodeURIComponent(prompt);
+        // שימוש ב-flux-realism לתוצאה הטובה ביותר
+        const url = `https://image.pollinations.ai/prompt/${encoded}?width=768&height=1024&nologo=true&seed=${Math.random()}&model=flux-realism`;
 
-        const response = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" }, timeout: 60000 });
-        if (!response.ok) throw new Error(`API Error: ${response.status}`);
+        const response = await fetch(url);
+        if (!response.ok) throw new Error("API response failed");
         
         const buffer = await response.arrayBuffer();
+        // מחזירים Base64 כדי שה-Frontend יציג את התמונה נכון
         return {
           id: index + 1,
           imageBase64: Buffer.from(buffer).toString("base64")
@@ -234,11 +213,9 @@ export const createPosters = async (brandingData) => {
       })
     );
 
-    const images = results.filter(r => r.status === "fulfilled").map(r => r.value);
-    return images;
-
+    return results.filter(r => r.status === "fulfilled").map(r => r.value);
   } catch (error) {
-    console.error("🔥 Poster Generation Error:", error.message);
+    console.error("🔥 Creative Director Error:", error.message);
     throw error;
   }
 };

@@ -112,12 +112,22 @@ RULE 3: TWO-SYLLABLE PUNCH
 - Use "International English" that is phonetically natural in Hebrew.
 - Format: [Product DNA Word] + [Simple Quality Word] (e.g., "SilkArt", "BakePro", "LensGold").
 
+// בתוך ה-Prompt של Gemini (generateBrandingFromAI):
+// # PART 2: THE PRODUCT-DRIVEN VISUAL BRIEF
+// In 'extended_designer_style', provide a 6-8 sentence prompt:
+// - Focus ONLY on the actual product: "${essence}".
+// - Describe the physical materials of this specific business.
+// - DO NOT use examples of other industries (No rugs, no food).
+// - MANDATORY: Start the prompt with "A professional isolated 3D logo symbol for [Industry]..."
+// - MANDATORY: Explicitly state "The background must be PURE WHITE #FFFFFF and nothing else."
 # PART 2: THE PRODUCT-DRIVEN VISUAL BRIEF
-In 'extended_designer_style', you must provide a **6-8 sentence prompt** that anchors the logo in the product's physical reality.
-- **Focus:** Describe the microscopic textures and specific shapes of the product (e.g., "the interlocking pattern of rug fibers", "the golden crystalline structure of sea salt on grilled meat").
-- **Lighting:** Use professional studio lighting (Soft-box, Rembrandt lighting) to highlight materials.
-- **Camera:** Use Macro or Close-up angles to show craftsmanship.
-- **STRICTLY FORBIDDEN:** Absolutely no icons of houses, general buildings, or generic human silhouettes. Focus 100% on the product itself.
+In 'extended_designer_style', you MUST provide a hyper-detailed 8-sentence prompt:
+- **Core Subject:** A unique, professional 3D logo symbol that represents the physical form of "${essence}".
+- **Materiality:** Describe the specific textures (e.g., if stickers: vinyl sheen, holographic edges, adhesive layers). 
+- **Exclusion:** DO NOT mention rugs, textiles, or food. Focus 100% on the industry of "${essence}".
+- **Lighting:** Professional studio rim lighting to emphasize the 3D shape.
+- **Background:** MANDATORY: "Isolated on a STRICTLY PURE WHITE #FFFFFF background".
+- **Color Integration:** Explicitly state that the symbol must be rendered using the colors from the palette.
 
 # Output Format (JSON):
 Return ONLY a strictly valid JSON. 
