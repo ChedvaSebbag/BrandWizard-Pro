@@ -27,7 +27,7 @@ export default function PosterGenerator() {
     setSelectedPosterId(null);
 
     try {
-      const res = await fetch("h    שבttp://localhost:5000/api/posters", {
+      const res = await fetch("http://localhost:5000/api/posters", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(brandingData),
