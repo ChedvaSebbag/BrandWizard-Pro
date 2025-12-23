@@ -8,6 +8,8 @@ import cors from "cors";
 import brandingRoute from "./Routes/BrandOptions.js";
 import logoRoutes from "./Routes/LogoGenerator.js";
 import postersRoutes from "./Routes/postersGenerator.js"; // ✅ חדש
+import landingPageRoutes from "./Routes/landingPage.js";
+
 
 const app = express();
 
@@ -17,6 +19,7 @@ app.use(express.json());
 app.use("/api", logoRoutes);
 app.use("/api/branding", brandingRoute);
 app.use("/api/posters", postersRoutes); // ✅ חובה
+app.use("/api/landing-page", landingPageRoutes); // ✅ חובה
 
 const PORT = process.env.PORT || 5000;
 

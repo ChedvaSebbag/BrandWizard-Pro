@@ -4,7 +4,8 @@ import Branding from "./pages/BrandOptions.jsx";
 import BrandResults from "./pages/BrandResults.jsx"; 
 import SelectedBrand from "./pages/SelectedBrand.jsx"; 
 import PosterGenerator from "./pages/PosterGenerator";
- import LandingPreview from "./pages/LandingPreview";
+ import LandingBuilder from "./pages/LandingBuilder.jsx";
+
 
 
 export default function App() {
@@ -16,7 +17,7 @@ export default function App() {
         <Route path="/results" element={<BrandResults />} /> {/* <-- הוסף כאן */}
          <Route path="/selected" element={<SelectedBrand />} />
 <Route path="/posters" element={<PosterGenerator />} />
-<Route path="/landing-preview" element={<LandingPreview />} />
+         <Route path="/" element={<LandingBuilder />} />
 
 
       </Routes>
