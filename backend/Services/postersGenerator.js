@@ -162,42 +162,69 @@
 // };
 
 
-
 import fetch from "node-fetch";
 
 export const createPosters = async (brandingData) => {
   try {
-    const { businessName, visualStyle, essence, colors, tagline } = brandingData;
+    const { 
+      businessName, businessDescription, visualStyle, 
+      tone, essence, colors, tagline 
+    } = brandingData;
 
     const colorsText = colors?.join(", ") || "professional brand colors";
 
-    // הנחיות קשיחות למניעת תמונות לא קשורות
+    // --- הנחיות הליבה: שילוב לוגו, רלוונטיות ואיכות CGI ---
     const baseVisualRules = `
-      Professional commercial advertising photography. 
-      The core subject of this image MUST be directly related to: "${essence}" for a business named "${businessName}".
-      Environment: A premium, realistic setting that reflects the industry of "${essence}".
-      Color Palette: Dominant use of ${colorsText}.
-      STRICTLY NO PEOPLE. NO FACES. NO TEXT.
-      Style: ${visualStyle}, high-end, 8k resolution, cinematic lighting.
+      Role: World-Class Commercial Photographer and Brand Strategist.
+      Task: Create a high-end advertising poster for "${businessName}" based on "${businessDescription}".
+      
+      STRICT LOGO INTEGRATION: 
+      The name "${businessName}" must be rendered as high-end 3D typography INTEGRATED into the scene. 
+      It should look like a laser-etched metal sign, an embossed leather mark, or a sleek transparent glass overlay. 
+      STRICTLY NO WHITE BOXES or solid rectangular backgrounds around the text. The text must catch the scene's light and shadows.
+
+      INDUSTRY RELEVANCE: 
+      The visual MUST be a direct representation of "${businessDescription}". 
+      If the business is Rugs, focus on intricate hand-knotted textures and woven fibers. 
+      If the business is Woodwork, focus on joinery and raw timber grain. 
+      The imagery must be hyper-relevant to the craft.
+
+      COMPOSITION & QUALITY:
+      Cinematic studio lighting, global illumination, and professional depth of field. 
+      STRICTLY NO PEOPLE. NO HUMANS. NO FACES.
+      Color Palette: Optimized using ${colorsText}.
+      Resolution: 8k, photorealistic, ${visualStyle} aesthetic.
     `.trim();
 
+    // --- שלושה קונספטים שיווקיים שונים ---
     const styles = [
-      `${baseVisualRules} Concept: A hero product/service shot. Focus on the tools or the result of "${essence}". Minimalist and clean background.`,
-      `${baseVisualRules} Concept: Atmospheric craftsmanship detail. Macro shot focusing on the textures and materials associated with "${essence}".`,
-      `${baseVisualRules} Concept: Modern workspace/environment. A wide-angle shot of a space where "${essence}" happens, conveying professional excellence.`
+      // 1. קונספט המקרו (התמקדות בחומר ובאיכות)
+      `${baseVisualRules} 
+       Concept: The Texture of Excellence. A macro close-up shot of the raw materials and craftsmanship of "${essence}". 
+       Focus on extreme detail (e.g., woven knots, polished surfaces). The tagline "${tagline}" is elegantly placed in the negative space.`,
+      
+      // 2. קונספט ה"הירו" (המוצר כמרכז העולם)
+      `${baseVisualRules} 
+       Concept: The Hero Product Shot. A grand, symmetrical presentation of a premium product from "${businessDescription}" as the centerpiece. 
+       Dramatic lighting creates a sense of luxury and status. The name "${businessName}" appears as a premium metallic brand mark on the surface.`,
+      
+      // 3. קונספט האווירה והטון (הרגש של המותג)
+      `${baseVisualRules} 
+       Concept: Atmospheric Essence. An evocative, artistic scene that captures the spirit of "${essence}". 
+       Use dynamic lighting and shadows from the ${colorsText} palette to create a prestigious, clean environment. The composition is minimal and impactful.`
     ];
 
-    console.log(`🖼️ Generating hyper-relevant posters for: ${essence}`);
+    console.log(`🖼️ Generating 3 hyper-professional posters for: ${businessName}`);
 
-    const seeds = [Math.floor(Math.random() * 1000), Math.floor(Math.random() * 1000) + 1111, Math.floor(Math.random() * 1000) + 2222];
+    const seeds = [Math.floor(Math.random() * 99999), Math.floor(Math.random() * 99999) + 1, Math.floor(Math.random() * 99999) + 2];
 
     const results = await Promise.allSettled(
       styles.map(async (stylePrompt, index) => {
         const encoded = encodeURIComponent(stylePrompt.trim());
         const url = `https://image.pollinations.ai/prompt/${encoded}?width=768&height=1024&nologo=true&seed=${seeds[index]}&model=flux&enhance=true`;
 
-        const response = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" }, timeout: 30000 });
-        if (!response.ok) throw new Error(`API Status ${response.status}`);
+        const response = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0" }, timeout: 60000 });
+        if (!response.ok) throw new Error(`API Error: ${response.status}`);
         
         const buffer = await response.arrayBuffer();
         return {
@@ -208,12 +235,10 @@ export const createPosters = async (brandingData) => {
     );
 
     const images = results.filter(r => r.status === "fulfilled").map(r => r.value);
-    if (images.length === 0) throw new Error("Could not generate relevant posters");
-
     return images;
 
   } catch (error) {
-    console.error("🔥 Strategic Poster Error:", error.message);
+    console.error("🔥 Poster Generation Error:", error.message);
     throw error;
   }
 };

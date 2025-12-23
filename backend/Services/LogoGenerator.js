@@ -14,68 +14,66 @@ export const generateLogoImage = async (brandingData) => {
       colors
     } = brandingData;
 
-    // הגדרה דינמית של הצבעים מתוך המערך שנשלח מה-Frontend
-    const colorsList = colors?.join(", ") || "vibrant brand colors";
+    // הגדרת הצבעים מהמערך
+    const colorsList = colors?.join(", ") || "vibrant professional colors";
 
-    const prompt = `
-    You are a senior brand designer creating a truly luxurious brand logo. 
-    CRITICAL: The visual identity must be a direct conceptual derivation of the Business Name and Essence.
+  // const prompt = `
+  //   You are a world-class senior brand identity designer. 
+  //   Your task is to create a definitive 3D textured logo mark for "${businessName}".
 
-    Business Name: "${businessName}"
-    Business Essence: "${businessDescription}"
-    Target Audience: "${targetAudience}"
-    Visual Style: "${visualStyle}"
-    Tone of Speech: "${tone}"
-    Brand Essence: "${essence}"
-    Brand Tagline: "${tagline}"
-    Extended Designer Style: ${extendedStyle}
-    Color Palette: ${colorsList}
+  //   ### 1. INDUSTRY RELEVANCE (Dynamic Concept)
+  //   - Industry Context: Analyze the Business Description ("${businessDescription}") and Essence ("${essence}").
+  //   - Visual Metaphor: Translate the core functional driver of the business into a unique geometric signature.
+  //   - Field-Specific Shapes: Use professional visual language appropriate for the field (e.g., woven/interlocking paths for textiles, organic/fluid for wellness, sharp/precise for tech, solid/structured for construction).
 
-    ### NEW: STRATEGIC ALIGNMENT
-    The logo mark must act as a visual bridge between the Business Name "${businessName}" and its core mission. 
-    Analyze the "Business Essence" and translate its primary emotional driver into a unique geometric signature.
+  //   ### 2. VISUAL EXECUTION & 3D VOLUME
+  //   - Style: Professional 3D Isometric vector mark.
+  //   - Depth: Use clean bevel, emboss, and strategic lighting to create professional volume within the symbol.
+  //   - Textures: Apply premium ${visualStyle} textures (e.g., brushed metal, silk-matte, or polished mineral) ONLY within the symbol's surfaces to reflect the brand's quality.
 
-    Scalability Requirement:
-    The logo must be suitable for future brand extensions and sub-brands.
+  //   ### 3. STRICT LOGO CONSTRAINTS
+  //   - NO PHOTOGRAPHY: Strictly avoid realistic objects, people, or photographic scenes.
+  //   - Background: STRICTLY PURE WHITE (#FFFFFF).
+  //   - Structure: A clean, unique abstract symbol + custom typography that reflects the "${tone}" brand voice.
+  //   - Scalability: The mark must be impactful on a billboard and legible as a favicon.
 
-    Design Guidelines:
-    The logo must express emotion and identity, not describe the product verbally.
-    Avoid clichés, stock symbols, or generic icons.
-    Use only abstract or metaphorical symbolism that resonates with "${essence}".
-    A luxurious, confident, and timeless look.
-    Clean typography that matches the brand personality.
+  //   ### 4. TECHNICAL SPECS
+  //   - Palette: Use ONLY ${colorsList}.
+  //   - Geometric Precision: Use Golden Ratio proportions and clean Euclidean geometry.
+  //   - Anti-Literal: Do not show the product literally. Express its essence through form, rhythm, and 3D visual tension.
 
-    Typography Direction:
-    Favor custom or different typography.
-    Avoid default system fonts.
-    The typography MUST mirror the visual weight and character of the logo symbol to create a unified brand voice.
+  //   Final Output: Create a high-resolution 3D textured logo mark that acts as the ultimate professional manifestation of "${businessName}".`.trim();
 
-    Strict Constraint:
-    Do not add decorative elements that do not serve meaning or structure.
-    Every shape must have a purpose derived from the brand's story.
 
-    Style Guidelines:
-    Minimalist
-    Modern Branding
-    Vector Style
-    Flat or Semi-Flat
-    Balanced Proportions
-    Strong Negative Space
+const prompt = `
+Role: Senior Brand Identity Architect specialized in Industry Archetypes.
+Task: Engineering a high-fidelity, isolated logo mark for "${businessName}".
 
-    Visual Execution Constraints (Critical):
-    Anti-Literal Approach: Strictly avoid literal descriptions. Use metaphorical abstraction. 
-    CONCEPTUAL FOCUS: If the business essence is about "${essence}", the shapes must embody that specific energy (e.g., fluid for agility, rigid for strength).
+### 1. INDUSTRY-SPECIFIC ANCHOR (The Relevance Fix)
+- **Deep Sector Analysis:** Analyze "${businessDescription}" and "${essence}". Identify the "Visual DNA" of this specific field.
+- **Mandatory Industry Motifs:** The logo MUST incorporate a sophisticated visual metaphor based on the industry's physical tools or products.
+    * **If Rugs/Textiles:** Use motifs of intertwined fibers, weaving patterns, intricate knots, or the silhouette of a loom.
+    * **If Culinary:** Use abstract culinary tools, heat/steam patterns, or artisanal ingredients.
+    * **If Professional Services:** Use structural foundations, connectivity nodes, or precise alignments.
+- **The "Recognition" Test:** A professional in the industry should immediately recognize the category of the business just by looking at the symbol.
 
-    Geometric Precision: Use golden ratio proportions, mathematical balance, and clean Euclidean geometry.
-    Visual Weight: Focus on controlling negative space. 
+### 2. MATERIAL REALISM & TACTILE TEXTURE
+- **Surface Integrity:** Apply a realistic material finish ONLY to the logo mark. 
+    * For Rugs/Textiles: Apply a "soft-fiber" or "woven-thread" texture with visible micro-depth.
+- **Dimensionality:** Use Rim Lighting and Global Illumination to create professional 3D volume, ensuring the symbol feels like a premium physical object.
 
-    Technical Output:
-    Single logo mark only
-    Centered composition
-    Pure white background (#FFFFFF)
-    Vector-style clarity
+### 3. ARCHITECTURAL RIGOR & TYPOGRAPHY
+- **Geometric Harmony:** Construct the logo using Golden Ratio proportions for perfect optical balance.
+- **Graphic DNA:** The font for "${businessName}" must mirror the physical properties of the symbol (e.g., if the symbol is woven, the font should have interlaced terminals).
+- **Spelling:** Ensure 100% orthographic accuracy for "${businessName}".
 
-    Final Output: Create a single, definitive logo mark that is the ultimate visual manifestation of "${businessName}". The design must feel like it could only belong to this specific business and no other.`.trim();
+### 4. PRODUCTION SPECIFICATIONS
+- **Environment:** Strictly **PURE WHITE (#FFFFFF) background**. Zero environment staging, zero floor textures, zero props.
+- **Palette:** Use ONLY ${colorsList}. Create depth via monochromatic shades from this specific spectrum.
+
+### FINAL COMMAND:
+Execute a production-ready brand mark that is an undeniable visual representative of "${businessDescription}". The design must be iconic, relevant, and demonstrates the meticulous detail of a top-tier design agency.
+`.trim();
 
     const cleanPrompt = prompt
       .replace(/[\[\]]/g, '')
@@ -85,10 +83,10 @@ export const generateLogoImage = async (brandingData) => {
     const encodedPrompt = encodeURIComponent(cleanPrompt);
     const seed = Math.floor(Math.random() * 1_000_000);
 
-    // כתובת ה-API המקורית כפי שהייתה בקוד המקורי שלך
-    const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&nologo=true&seed=${seed}`;
+    // שימוש במודל flux לקבלת איכות גבוהה ודיוק בטקסטורות
+    const url = `https://image.pollinations.ai/prompt/${encodedPrompt}?width=1024&height=1024&nologo=true&seed=${seed}&model=flux&enhance=true`;
 
-    console.log("🎨 Fetching Logo Image using original comprehensive prompt");
+    console.log(`🎨 Fetching 3D Vector Logo for: ${businessName}`);
 
     const response = await fetch(url, {
       headers: {

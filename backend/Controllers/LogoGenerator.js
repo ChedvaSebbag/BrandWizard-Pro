@@ -1,4 +1,4 @@
-import potrace from "potrace";
+
 // שומרים על הייבוא הקיים שלך מה-Service
 import { generateLogoImage } from "../Services/LogoGenerator.js"; 
 

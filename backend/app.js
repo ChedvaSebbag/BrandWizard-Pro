@@ -10,7 +10,9 @@ import logoRoutes from "./Routes/LogoGenerator.js";
 import postersRoutes from "./Routes/postersGenerator.js"; // ✅ חדש
 
 const app = express();
-
+// בתוך קובץ ה-backend הראשי שלך
+app.use(express.json({ limit: '50mb' }));
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(cors());
 app.use(express.json());
 
