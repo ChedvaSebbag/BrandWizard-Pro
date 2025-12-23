@@ -165,21 +165,21 @@ import fetch from "node-fetch";
 
 export const createPosters = async (brandingData) => {
   try {
-    const { businessName, businessDescription, visualStyle, colors, essence, tagline } = brandingData;
+    // שליפת הלוגו בנפרד כדי שלא ייכנס למחרוזת הפרומפט ויגרום לשגיאת אורך URL
+    const { businessName, businessDescription, visualStyle, colors, essence, tagline, logo } = brandingData;
     const colorsText = colors?.join(", ") || "vibrant colors";
 
-    // הפרומפט המפורט ששומר על איכות גבוהה ורלוונטיות
+    // בניית הפרומפט - שים לב שמשתנה ה-logo לא נכנס לכאן
     const baseVisualRules = `
       Role: Senior Creative Director & Commercial Photographer.
       Task: Create a high-end advertising background for "${businessName}".
       
       --- RELEVANCE ---
       The business is: "${businessDescription}".
-      The imagery MUST feature physical items related to "${essence}". 
-      (Example: If a toy store, show high-quality wooden blocks, puzzles, and colorful cubes).
+      The imagery MUST feature professional, realistic physical items related to "${essence}". 
       
       --- DESIGN & QUALITY ---
-      Style: ${visualStyle}, 8k resolution, photorealistic CGI.
+      Style: ${visualStyle}, 8k resolution, professional editorial photography.
       Lighting: Cinematic studio lighting.
       Color Palette: ${colorsText}.
       
@@ -198,14 +198,14 @@ export const createPosters = async (brandingData) => {
     const results = await Promise.allSettled(
       styles.map(async (prompt, index) => {
         const encoded = encodeURIComponent(prompt);
-        // שימוש ב-flux-realism לתוצאה הטובה ביותר
-        const url = `https://image.pollinations.ai/prompt/${encoded}?width=768&height=1024&nologo=true&seed=${Math.random()}&model=flux-realism`;
+        // שימוש ב-seed דינמי למניעת כפילויות
+        const url = `https://image.pollinations.ai/prompt/${encoded}?width=768&height=1024&nologo=true&seed=${Math.floor(Math.random() * 1000000)}&model=flux-realism`;
 
         const response = await fetch(url);
         if (!response.ok) throw new Error("API response failed");
         
         const buffer = await response.arrayBuffer();
-        // מחזירים Base64 כדי שה-Frontend יציג את התמונה נכון
+        
         return {
           id: index + 1,
           imageBase64: Buffer.from(buffer).toString("base64")
