@@ -165,44 +165,46 @@ import fetch from "node-fetch";
 
 export const createPosters = async (brandingData) => {
   try {
-    // שליפת הלוגו בנפרד כדי שלא ייכנס למחרוזת הפרומפט ויגרום לשגיאת אורך URL
-    const { businessName, businessDescription, visualStyle, colors, essence, tagline, logo } = brandingData;
-    const colorsText = colors?.join(", ") || "vibrant colors";
+    const { businessName, businessDescription, visualStyle, colors, essence, tagline } = brandingData;
+    const colorsText = colors?.join(", ") || "coordinated colors";
 
-    // בניית הפרומפט - שים לב שמשתנה ה-logo לא נכנס לכאן
+    // פרומפט דינמי שמתאים את עצמו לכל סוג עסק
     const baseVisualRules = `
-      Role: Senior Creative Director & Commercial Photographer.
-      Task: Create a high-end advertising background for "${businessName}".
+      Task: Create a professional high-end advertising background.
+      Main Subject: Realistic representation of ${essence}.
+      Context: ${businessDescription}.
       
-      --- RELEVANCE ---
-      The business is: "${businessDescription}".
-      The imagery MUST feature professional, realistic physical items related to "${essence}". 
+      --- VISUAL DIRECTION ---
+      Style: ${visualStyle}, 8k resolution, professional commercial photography.
+      Vibe: ${essence} atmosphere, high-quality textures.
+      Lighting: Cinematic studio lighting that highlights the subject.
+      Color Palette: Use a dominant theme of ${colorsText}.
       
-      --- DESIGN & QUALITY ---
-      Style: ${visualStyle}, 8k resolution, professional editorial photography.
-      Lighting: Cinematic studio lighting.
-      Color Palette: ${colorsText}.
+      --- COMPOSITION ---
+      Layout: Clean, minimalist, and premium.
+      Negative Space: Leave the central and upper-third areas clear and empty. 
+      Important: The background must allow space for a logo and the text: "${tagline}".
       
-      --- STRICTURES ---
-      STRICTLY NO TEXT, NO LETTERS, NO LOGOS in the generated image. 
-      STRICTLY NO PEOPLE, NO HUMANS, NO FACES.
-      Leave the central area clear for overlaying branding.
+      --- STRICTURES (WHAT TO AVOID) ---
+      - STRICTLY NO TEXT, NO LETTERS, NO SIGNAGE within the image.
+      - STRICTLY NO PEOPLE, NO HUMANS, NO FACES, NO HANDS.
+      - STRICTLY NO cameras, NO lenses, NO photography equipment (unless the business IS a photography studio).
+      - The image must be a clean background, not a busy scene.
     `.trim();
 
     const styles = [
-      `${baseVisualRules} Concept: Focus on the craftsmanship and textures of ${essence}.`,
-      `${baseVisualRules} Concept: A hero shot of core items from ${businessDescription} in a clean setting.`,
-      `${baseVisualRules} Concept: Atmospheric and artistic representation of the brand's world.`
+      `${baseVisualRules} Concept: A high-end hero shot focusing on the craftsmanship and premium quality of ${essence}.`,
+      `${baseVisualRules} Concept: A minimalist and elegant arrangement of elements related to ${businessDescription} on a professional surface.`,
+      `${baseVisualRules} Concept: An atmospheric, artistic close-up of ${essence} with soft focus and bokeh background.`
     ];
 
     const results = await Promise.allSettled(
       styles.map(async (prompt, index) => {
         const encoded = encodeURIComponent(prompt);
-        // שימוש ב-seed דינמי למניעת כפילויות
         const url = `https://image.pollinations.ai/prompt/${encoded}?width=768&height=1024&nologo=true&seed=${Math.floor(Math.random() * 1000000)}&model=flux-realism`;
 
         const response = await fetch(url);
-        if (!response.ok) throw new Error("API response failed");
+        if (!response.ok) throw new Error(`API error: ${response.status}`);
         
         const buffer = await response.arrayBuffer();
         
@@ -215,7 +217,7 @@ export const createPosters = async (brandingData) => {
 
     return results.filter(r => r.status === "fulfilled").map(r => r.value);
   } catch (error) {
-    console.error("🔥 Creative Director Error:", error.message);
+    console.error("🔥 Global Creative Director Error:", error.message);
     throw error;
   }
 };

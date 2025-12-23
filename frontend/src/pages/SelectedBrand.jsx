@@ -523,16 +523,20 @@ export default function SelectedBrand() {
   };
 
   // הכנת מבנה הנתונים האחיד למעבר בין דפים
-  const getPayload = () => ({
-    businessName: selectedConcept.brand_name_hebrew,
-    businessDescription: userInput.essence,
-    targetAudience: userInput.audience,
-    visualStyle: userInput.style,
-    extendedStyle: selectedConcept.extended_designer_style,
-    colors: selectedConcept.color_palette,
-    tagline: selectedConcept.tagline,
-    logo: logo
-  });
+// בתוך SelectedBrand.jsx
+const getPayload = () => ({
+  businessName: selectedConcept.brand_name_hebrew,
+  businessDescription: userInput.essence,
+  targetAudience: userInput.audience,
+  visualStyle: userInput.style,
+  extendedStyle: selectedConcept.extended_designer_style,
+  colors: selectedConcept.color_palette, // שם אחיד: colors
+  tagline: selectedConcept.tagline,
+  logo: logo // Base64 נקי מהשרת
+});
+
+// כפתורי הניווט
+
 
   if (!selectedConcept) return null;
 

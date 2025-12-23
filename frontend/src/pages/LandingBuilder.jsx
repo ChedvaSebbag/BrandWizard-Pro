@@ -239,39 +239,73 @@ export default function LandingBuilder() {
   const [formData, setFormData] = useState({ services: "", phone: "", email: "", ctaType: "contact" });
   const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    try {
-      const res = await fetch("http://localhost:5000/api/landing-page", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ 
-          ...brandingData, 
-          ...formData, 
-          services: formData.services.split(",").map(s => s.trim()).filter(Boolean) 
-        }),
-      });
+  // const handleSubmit = async (e) => {
+  //   e.preventDefault();
+  //   setLoading(true);
+  //   try {
+  //     const res = await fetch("http://localhost:5000/api/landing-page", {
+  //       method: "POST",
+  //       headers: { "Content-Type": "application/json" },
+  //       body: JSON.stringify({ 
+  //         ...brandingData, 
+  //         ...formData, 
+  //         services: formData.services.split(",").map(s => s.trim()).filter(Boolean) 
+  //       }),
+  //     });
       
-      const aiData = await res.json();
+  //     const aiData = await res.json();
       
-      // העברת הנתונים המשולבים (תוכן AI + לוגו וצבעים מקוריים) ל-Preview
-      navigate("/landing-preview", { 
-        state: { 
-          landingData: { 
-            ...aiData,       
-            ...brandingData, 
-            contactInfo: formData 
-          } 
-        } 
-      });
-    } catch (err) { 
-      alert("שגיאה ביצירת הדף"); 
-    } finally { 
-      setLoading(false); 
-    }
-  };
+  //     // העברת הנתונים המשולבים (תוכן AI + לוגו וצבעים מקוריים) ל-Preview
+  //     navigate("/landing-preview", { 
+  //       state: { 
+  //         landingData: { 
+  //           ...aiData,       
+  //           ...brandingData, 
+  //           contactInfo: formData 
+  //         } 
+  //       } 
+  //     });
+  //   } catch (err) { 
+  //     alert("שגיאה ביצירת הדף"); 
+  //   } finally { 
+  //     setLoading(false); 
+  //   }
+  // };
 
+  // בתוך LandingBuilder.jsx - פונקציית handleSubmit
+// בתוך LandingBuilder.jsx - פונקציית handleSubmit
+const handleSubmit = async (e) => {
+  e.preventDefault();
+  setLoading(true);
+  try {
+    const res = await fetch("http://localhost:5000/api/landing-page", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ 
+        ...brandingData, 
+        ...formData, 
+        services: formData.services.split(",").map(s => s.trim()).filter(Boolean) 
+      }),
+    });
+    
+    const aiData = await res.json();
+    
+    // סנכרון סופי של המבנה עבור ה-Preview
+    navigate("/landing-preview", { 
+      state: { 
+        landingData: { 
+          ...brandingData,      // לוגו וצבעים
+          ...aiData,            // תוכן ה-AI (hero, about, services)
+          contactInfo: formData // פרטי התקשרות מהטופס
+        } 
+      } 
+    });
+  } catch (err) { 
+    alert("שגיאה ביצירת התוכן"); 
+  } finally { 
+    setLoading(false); 
+  }
+};
   return (
     <div className="max-w-4xl mx-auto px-6 py-14 text-right" dir="rtl">
       {brandingData?.logo && (

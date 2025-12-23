@@ -34,9 +34,9 @@
 //       });
 
 //       if (!res.ok) throw new Error(`שגיאת שרת: ${res.status}`);
-      
+
 //       const data = await res.json();
-      
+
 //       // השרת מחזיר מערך בתוך data.posters
 //       if (data.posters && data.posters.length > 0) {
 //         setPosters(data.posters);
@@ -84,7 +84,7 @@
 //       <div className="max-w-7xl mx-auto text-center mb-12">
 //         <h2 className="text-4xl font-black mb-4 text-slate-900">הקמפיין הפרסומי שלך</h2>
 //         <p className="text-slate-500 mb-8">בחר את העיצוב המנצח לדף הנחיתה ולפרסום</p>
-        
+
 //         <div className="flex justify-center gap-4 flex-wrap">
 //           <button 
 //             onClick={generatePosters} 
@@ -98,7 +98,7 @@
 //               </span>
 //             ) : "רענן עיצובים 🔄"}
 //           </button>
-          
+
 //           <button
 //             onClick={() => {
 //               const selected = posters.find(p => p.id === selectedPosterId) || posters[0];
@@ -131,10 +131,10 @@
 //                 alt="Branded Background" 
 //                 className="absolute inset-0 w-full h-full object-cover" 
 //               />
-              
+
 //               {/* שכבת תוכן עליונה (Overlay) */}
 //               <div className="absolute inset-0 flex flex-col justify-between p-10 z-10 bg-gradient-to-b from-black/20 via-transparent to-black/60">
-                
+
 //                 {/* לוגו עליון */}
 //                 <div className="flex justify-center">
 //                   {logo && (
@@ -147,7 +147,7 @@
 //                     </div>
 //                   )}
 //                 </div>
-                
+
 //                 {/* טקסט וסלוגן תחתון */}
 //                 <div className="text-center space-y-4">
 //                   <div className="bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 shadow-2xl">
@@ -254,8 +254,13 @@ export default function PosterGenerator() {
           <button
             onClick={() => {
               const selected = posters.find(p => p.id === selectedPosterId) || posters[0];
-              // התיקון הקריטי: מעבירים את ה-brandingData המקורי (עם הלוגו) הלאה
-              navigate("/landingBuilder", { state: { ...brandingData, selectedPoster: selected } });
+              // מעבירים את הנתונים בצורה שטוחה ללא עטיפות מיותרות
+              navigate("/landingBuilder", {
+                state: {
+                  ...brandingData,
+                  selectedPoster: selected
+                }
+              });
             }}
             disabled={posters.length === 0}
             className="px-8 py-4 bg-emerald-600 text-white rounded-2xl font-bold shadow-xl"
@@ -268,8 +273,8 @@ export default function PosterGenerator() {
       <div className="max-w-7xl mx-auto grid gap-10 grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
         {posters.map((poster) => (
           <div key={poster.id} className="flex flex-col gap-5">
-            <div 
-              id={`poster-card-${poster.id}`} 
+            <div
+              id={`poster-card-${poster.id}`}
               onClick={() => setSelectedPosterId(poster.id)}
               className={`relative bg-white shadow-2xl overflow-hidden aspect-[3/4] w-full rounded-3xl cursor-pointer transition-all ${selectedPosterId === poster.id ? 'ring-8 ring-emerald-500 scale-[1.03]' : ''}`}
             >

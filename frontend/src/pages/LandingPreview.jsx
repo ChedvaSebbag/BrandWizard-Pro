@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { useState } from "react";
 
-// פונקציות עזר לחילוץ נתונים בטוח
+// 1. פונקציות עזר - חייבות להיות מחוץ לקומפוננטה (מעליה)
 function getPalette(d) {
   const palette = d?.colors || d?.color_palette || [];
   const [c1, c2, c3] = palette.length >= 3 ? palette : ["#0f172a", "#14b8a6", "#f59e0b"];
@@ -9,71 +9,73 @@ function getPalette(d) {
 }
 
 function getLogoSrc(d) {
-  const raw = d?.logo || "";
+  const raw = d?.logo || d?.brandLogo || "";
   if (!raw) return "";
   return raw.startsWith("data:image/") ? raw : `data:image/png;base64,${raw}`;
 }
 
+// 2. החלק העיקרי של הדף
 export default function LandingPreview() {
   const { state } = useLocation();
+  
+  // חילוץ הנתונים מהעטיפה שיצרנו ב-Builder
   const d = state?.landingData;
+  
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishedUrl, setPublishedUrl] = useState("");
 
-  // הגנה: אם אין נתונים, לא לרנדר דף ריק
+  // הגנה: אם אין נתונים, מציג הודעת טעינה
   if (!d) return <div className="p-20 text-center font-sans text-gray-500">טוען נתונים...</div>;
 
+  // שימוש בפונקציות העזר שהגדרנו למעלה
   const { c1, c2, c3 } = getPalette(d);
   const logoSrc = getLogoSrc(d);
   const phone = d.contactInfo?.phone || d.phone || "";
   const email = d.contactInfo?.email || d.email || "";
 
-  // בניית ה-HTML המלא לפרסום (מבוסס על העיצוב ה"יפה")
+  // פונקציה לבניית ה-HTML (לצורך הפרסום)
   const buildHtml = () => {
     const servicesHtml = Array.isArray(d.services) 
       ? d.services.map(s => `<li style="margin-bottom:10px;">✓ ${s}</li>`).join("") 
       : "";
 
     return `
-<!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
-  <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>${d.businessName || "דף נחיתה"}</title>
-  <style>
-    :root { --c1: ${c1}; --c2: ${c2}; --c3: ${c3}; }
-    body { font-family: system-ui, sans-serif; margin: 0; background: #fff; color: #1a1a1a; text-align: right; line-height: 1.6; }
-    .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
-    header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 20px; border-bottom: 1px solid #eee; }
-    .hero { background: linear-gradient(135deg, ${c2}10, white); padding: 70px 30px; border-radius: 40px; text-align: center; border: 1px solid #f0f0f0; margin-top: 30px; }
-    .btn { display: inline-block; background: ${c2}; color: white; padding: 18px 45px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 1.3rem; margin-top: 20px; box-shadow: 0 10px 20px ${c2}30; }
-    .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px; }
-    .card { background: #f9f9f9; padding: 30px; border-radius: 25px; border: 1px solid #eee; }
-    .footer { background: #111; color: white; padding: 40px; border-radius: 30px; margin-top: 50px; text-align: center; }
-    @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
-  </style>
-</head>
-<body>
-  <div class="container">
-    <header>
-      ${logoSrc ? `<img src="${logoSrc}" height="50">` : `<strong>${d.businessName}</strong>`}
-      <div>${phone}</div>
-    </header>
-    <section class="hero">
-      <h1>${d.hero?.title || ""}</h1>
-      <p style="font-size:1.3rem; color:#555">${d.hero?.subtitle || ""}</p>
-      <a href="tel:${phone}" class="btn">${d.cta || "צרו קשר"}</a>
-    </section>
-    <div class="grid">
-      <div class="card"><h2>על העסק</h2><p>${d.about || ""}</p></div>
-      <div class="card"><h2>השירותים שלנו</h2><ul style="list-style:none; padding:0">${servicesHtml}</ul></div>
-    </div>
-    <div class="footer">
-      <p>${phone} | ${email}</p>
-    </div>
-  </div>
-</body>
-</html>`;
+      <!DOCTYPE html>
+      <html lang="he" dir="rtl">
+      <head>
+        <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>${d.businessName || "דף נחיתה"}</title>
+        <style>
+          :root { --c1: ${c1}; --c2: ${c2}; --c3: ${c3}; }
+          body { font-family: system-ui, sans-serif; margin: 0; background: #fff; color: #1a1a1a; text-align: right; line-height: 1.6; }
+          .container { max-width: 900px; margin: 0 auto; padding: 40px 20px; }
+          header { display: flex; align-items: center; justify-content: space-between; padding-bottom: 20px; border-bottom: 1px solid #eee; }
+          .hero { background: linear-gradient(135deg, ${c2}10, white); padding: 70px 30px; border-radius: 40px; text-align: center; border: 1px solid #f0f0f0; margin-top: 30px; }
+          .btn { display: inline-block; background: ${c2}; color: white; padding: 18px 45px; border-radius: 50px; text-decoration: none; font-weight: bold; font-size: 1.3rem; margin-top: 20px; box-shadow: 0 10px 20px ${c2}30; }
+          .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 40px; }
+          .card { background: #f9f9f9; padding: 30px; border-radius: 25px; border: 1px solid #eee; }
+          .footer { background: #111; color: white; padding: 40px; border-radius: 30px; margin-top: 50px; text-align: center; }
+        </style>
+      </head>
+      <body>
+        <div class="container">
+          <header>
+            ${logoSrc ? `<img src="${logoSrc}" height="50">` : `<strong>${d.businessName}</strong>`}
+            <div>${phone}</div>
+          </header>
+          <section class="hero">
+            <h1>${d.hero?.title || ""}</h1>
+            <p style="font-size:1.3rem; color:#555">${d.hero?.subtitle || ""}</p>
+            <a href="tel:${phone}" class="btn">${d.cta || "צרו קשר"}</a>
+          </section>
+          <div class="grid">
+            <div class="card"><h2>על העסק</h2><p>${d.about || ""}</p></div>
+            <div class="card"><h2>השירותים שלנו</h2><ul style="list-style:none; padding:0">${servicesHtml}</ul></div>
+          </div>
+          <div class="footer"><p>${phone} | ${email}</p></div>
+        </div>
+      </body>
+      </html>`;
   };
 
   const handlePublish = async () => {
@@ -93,9 +95,9 @@ export default function LandingPreview() {
     }
   };
 
+  // 3. הרינדור של הדף (מה שהמשתמש רואה ב-Preview)
   return (
     <div className="min-h-screen bg-slate-50 text-right font-sans" dir="rtl">
-      {/* סרגל מערכת */}
       <nav className="bg-slate-900 text-white p-4 flex justify-between items-center sticky top-0 z-50 shadow-lg">
         <span className="font-bold">תצוגה מקדימה: {d.businessName}</span>
         <button 
@@ -107,7 +109,6 @@ export default function LandingPreview() {
         </button>
       </nav>
 
-      {/* תצוגת האתר בתוך הקומפוננטה */}
       <div className="max-w-5xl mx-auto my-10 bg-white shadow-2xl rounded-[50px] overflow-hidden border p-10 md:p-16">
         {publishedUrl && (
           <div className="mb-10 p-6 bg-emerald-50 border-2 border-emerald-500 rounded-3xl text-center">
