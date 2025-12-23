@@ -1,17 +1,21 @@
 pipeline {
   agent any
 
+  environment {
+    PATH = "/Applications/Docker.app/Contents/Resources/bin:/usr/local/bin:/usr/bin:/bin"
+  }
+
   stages {
 
     stage('Build Docker Images') {
       steps {
-        sh '/usr/local/bin/docker compose build'
+        sh 'docker compose build'
       }
     }
 
     stage('Run Containers') {
       steps {
-        sh '/usr/local/bin/docker compose up -d'
+        sh 'docker compose up -d'
       }
     }
 
