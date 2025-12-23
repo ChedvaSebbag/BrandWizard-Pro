@@ -27,7 +27,7 @@ export default function PosterGenerator() {
     setSelectedPosterId(null);
 
     try {
-      const res = await fetch("http://localhost:5000/api/posters", {
+      const res = await fetch("h    שבttp://localhost:5000/api/posters", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(brandingData),
@@ -102,7 +102,7 @@ export default function PosterGenerator() {
           <button
             onClick={() => {
               const selected = posters.find(p => p.id === selectedPosterId) || posters[0];
-              navigate("/landing-preview", { state: { brandingData, selectedPoster: selected } });
+              navigate("/landingBuilder", { state: { brandingData, selectedPoster: selected } });
             }}
             disabled={posters.length === 0}
             className={`px-8 py-4 rounded-2xl font-bold shadow-xl transition-all ${
