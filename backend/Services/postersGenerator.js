@@ -170,33 +170,69 @@ export const createPosters = async (brandingData) => {
 
     // פרומפט דינמי שמתאים את עצמו לכל סוג עסק
     const baseVisualRules = `
-      Task: Create a professional high-end advertising background.
-      Main Subject: Realistic representation of ${essence}.
-      Context: ${businessDescription}.
-      
-      --- VISUAL DIRECTION ---
-      Style: ${visualStyle}, 8k resolution, professional commercial photography.
-      Vibe: ${essence} atmosphere, high-quality textures.
-      Lighting: Cinematic studio lighting that highlights the subject.
-      Color Palette: Use a dominant theme of ${colorsText}.
-      
-      --- COMPOSITION ---
-      Layout: Clean, minimalist, and premium.
-      Negative Space: Leave the central and upper-third areas clear and empty. 
-      Important: The background must allow space for a logo and the text: "${tagline}".
-      
-      --- STRICTURES (WHAT TO AVOID) ---
-      - STRICTLY NO TEXT, NO LETTERS, NO SIGNAGE within the image.
-      - STRICTLY NO PEOPLE, NO HUMANS, NO FACES, NO HANDS.
-      - STRICTLY NO cameras, NO lenses, NO photography equipment (unless the business IS a photography studio).
-      - The image must be a clean background, not a busy scene.
-    `.trim();
+Task: Create a high-end professional advertising background image.
 
-    const styles = [
-      `${baseVisualRules} Concept: A high-end hero shot focusing on the craftsmanship and premium quality of ${essence}.`,
-      `${baseVisualRules} Concept: A minimalist and elegant arrangement of elements related to ${businessDescription} on a professional surface.`,
-      `${baseVisualRules} Concept: An atmospheric, artistic close-up of ${essence} with soft focus and bokeh background.`
-    ];
+MAIN VISUAL SUBJECT (VERY IMPORTANT):
+Show realistic, high-quality physical objects, products, tools, or materials
+that are clearly and immediately associated with the following business field.
+The subject must be recognizable within 1–2 seconds.
+
+Business Description:
+${businessDescription}
+
+WHAT TO SHOW:
+- Only objects, materials, or environments related to the business field.
+- Studio-quality commercial photography style.
+- Realistic, premium, clean presentation.
+
+BRAND FEEL (HOW IT SHOULD FEEL, NOT WHAT IS SHOWN):
+${essence}
+
+VISUAL STYLE:
+${visualStyle}
+Ultra high resolution, professional advertising photography, premium quality.
+
+COLOR DIRECTION:
+Use a dominant and cohesive palette based on:
+${colorsText}
+
+COMPOSITION:
+- Minimal, clean, and professional.
+- Clear negative space in the center or upper third.
+- The image must allow space for logo placement and the tagline:
+"${tagline}"
+
+STRICT RULES – MUST FOLLOW:
+- NO text, letters, numbers, signs, or logos inside the image.
+- NO people, faces, hands, or body parts.
+- NO abstract visuals unless they clearly support the business field.
+- NO unrelated objects.
+- Background must not be cluttered.
+- The image must visually represent the business itself, not just an emotion.
+
+FINAL GOAL:
+A realistic, advertising-ready background image that clearly matches the business
+and emotionally reflects the brand essence.
+`.trim();
+
+
+   const styles = [
+  `${baseVisualRules}
+Concept 1:
+A clean hero-style composition featuring the main business-related products or tools,
+presented in a premium, commercial advertising setup.`,
+
+  `${baseVisualRules}
+Concept 2:
+A close-up professional shot highlighting textures, materials, or details
+commonly found in this type of business.`,
+
+  `${baseVisualRules}
+Concept 3:
+A wider scene showing an elegant, minimal environment where this business operates,
+without people, focusing only on objects and atmosphere.`
+];
+
 
     const results = await Promise.allSettled(
       styles.map(async (prompt, index) => {

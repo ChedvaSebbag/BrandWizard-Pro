@@ -1,67 +1,54 @@
 import fetch from "node-fetch";
 import archiver from "archiver";
-import { PassThrough } from "stream";
 
 export async function publishLanding(req, res) {
-    const { html } = req.body;
+  const { html } = req.body;
+  if (!html) return res.status(400).json({ error: "HTML content is missing" });
 
-    if (!html) {
-        return res.status(400).json({ error: "HTML content is missing" });
-    }
+  try {
+    // 1. Create new site
+    const createRes = await fetch("https://api.netlify.com/api/v1/sites", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${process.env.NET_TOKEN}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ name: `site-${Date.now()}` }),
+    });
+    const siteData = await createRes.json();
+    if (!createRes.ok) throw new Error(siteData.message || "Failed to create site");
 
-    try {
-        // 1. יצירת אתר חדש בנטליפיי
-        const createRes = await fetch("https://api.netlify.com/api/v1/sites", {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${process.env.NET_TOKEN}`,
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify({ 
-                name: `brandwizard-${Date.now()}`,
-            }),
-        });
+    // 2. Create ZIP in memory with proper folder
+    const chunks = [];
+    const archive = archiver("zip");
 
-        const siteData = await createRes.json();
-        if (!createRes.ok) throw new Error(siteData.message || "Failed to create site");
-        
-        const SITE_ID = siteData.id;
+    const zipBuffer = await new Promise((resolve, reject) => {
+      archive.on("data", (chunk) => chunks.push(chunk));
+      archive.on("end", () => resolve(Buffer.concat(chunks)));
+      archive.on("error", reject);
 
-        // 2. הכנת ה-ZIP והזרם (Stream)
-        const stream = new PassThrough();
-        const archive = archiver('zip', { zlib: { level: 9 } });
+      // Put the file *inside a folder*
+      archive.append(html, { name: "site/index.html" });
+      archive.finalize();
+    });
 
-        archive.on('error', err => { throw err; });
+    // 3. Upload deploy
+    const deployRes = await fetch(
+      `https://api.netlify.com/api/v1/sites/${siteData.id}/deploys`,
+      {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.NET_TOKEN}`,
+          "Content-Type": "application/zip",
+        },
+        body: zipBuffer,
+      }
+    );
 
-        // 3. ביצוע ה-Deploy (שליחת הזרם)
-        // חשוב: נטליפיי דורשת Content-Type של application/zip ב-Deploy
-        const deployPromise = fetch(`https://api.netlify.com/api/v1/sites/${SITE_ID}/deploys`, {
-            method: "POST",
-            headers: {
-                "Authorization": `Bearer ${process.env.NET_TOKEN}`,
-                "Content-Type": "application/zip",
-            },
-            body: stream,
-        }).then(res => res.json());
-
-        // הזרקת התוכן לארכיון
-        archive.pipe(stream);
-        // התיקון הקריטי: שם הקובץ חייב להיות index.html כדי שהשרת יציג אותו כדף הבית
-        archive.append(html, { name: 'index.html' });
-        archive.finalize();
-
-        const deployData = await deployPromise;
-
-        if (deployData.error) throw new Error(deployData.error);
-
-        // החזרת הקישור הישיר לאתר
-        res.json({ 
-            url: deployData.ssl_url || deployData.url,
-            siteId: SITE_ID 
-        });
-
-    } catch (error) {
-        console.error("Publish Error:", error);
-        res.status(500).json({ error: "הפרסום נכשל" });
-    }
+    const deployData = await deployRes.json();
+    res.json({ url: deployData.ssl_url || deployData.url });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "הפרסום נכשל" });
+  }
 }

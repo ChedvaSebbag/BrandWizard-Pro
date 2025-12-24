@@ -94,20 +94,53 @@ export default function LandingPreview() {
       setIsPublishing(false);
     }
   };
+  const handleDownload = () => {
+    // 1. קבלת תוכן ה-HTML מהפונקציה הקיימת שלך
+    const htmlContent = buildHtml();
+    
+    // 2. יצירת אובייקט מסוג Blob המכיל את הקוד
+    const blob = new Blob([htmlContent], { type: "text/html" });
+    
+    // 3. יצירת כתובת URL זמנית עבור הקובץ
+    const url = URL.createObjectURL(blob);
+    
+    // 4. יצירת אלמנט קישור פיקטיבי ולחיצה עליו להורדה
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "index.html"; // שם הקובץ שיישמר במחשב
+    document.body.appendChild(link);
+    link.click();
+    
+    // 5. ניקוי: הסרת האלמנט וביטול ה-URL הזמני
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
 
   // 3. הרינדור של הדף (מה שהמשתמש רואה ב-Preview)
   return (
     <div className="min-h-screen bg-slate-50 text-right font-sans" dir="rtl">
-      <nav className="bg-slate-900 text-white p-4 flex justify-between items-center sticky top-0 z-50 shadow-lg">
-        <span className="font-bold">תצוגה מקדימה: {d.businessName}</span>
-        <button 
-          onClick={handlePublish}
-          disabled={isPublishing}
-          className="bg-emerald-500 hover:bg-emerald-600 px-6 py-2 rounded-full text-sm font-bold transition-all"
-        >
-          {isPublishing ? "מפרסם..." : "קבל קישור לאתר חי 🔗"}
-        </button>
-      </nav>
+ <nav className="bg-slate-900 text-white p-4 flex justify-between items-center sticky top-0 z-50 shadow-lg">
+  <span className="font-bold">תצוגה מקדימה: {d.businessName}</span>
+  
+  <div className="flex gap-3">
+    {/* כפתור הורדה חדש */}
+    <button 
+      onClick={handleDownload}
+      className="bg-slate-700 hover:bg-slate-600 px-6 py-2 rounded-full text-sm font-bold transition-all"
+    >
+      הורד קובץ HTML 📥
+    </button>
+
+    {/* כפתור פרסום קיים */}
+    <button 
+      onClick={handlePublish}
+      disabled={isPublishing}
+      className="bg-emerald-500 hover:bg-emerald-600 px-6 py-2 rounded-full text-sm font-bold transition-all"
+    >
+      {isPublishing ? "מפרסם..." : "קבל קישור לאתר חי 🔗"}
+    </button>
+  </div>
+</nav>
 
       <div className="max-w-5xl mx-auto my-10 bg-white shadow-2xl rounded-[50px] overflow-hidden border p-10 md:p-16">
         {publishedUrl && (
