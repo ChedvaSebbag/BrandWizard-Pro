@@ -165,74 +165,63 @@ import fetch from "node-fetch";
 
 export const createPosters = async (brandingData) => {
   try {
-    const { businessName, businessDescription, visualStyle, colors, essence, tagline } = brandingData;
+    const { businessName, businessDescription, visualStyle,targetAudience, extendedStyle,colors, essence, tagline } = brandingData;
     const colorsText = colors?.join(", ") || "coordinated colors";
 
     // פרומפט דינמי שמתאים את עצמו לכל סוג עסק
-    const baseVisualRules = `
-Task: Create a high-end professional advertising background image.
+   // פרומפט דינמי שמתאים את עצמו לכל סוג עסק
+// const baseVisualRules = `
+// Create THREE high-end, professional advertising images for the following business:
 
-MAIN VISUAL SUBJECT (VERY IMPORTANT):
-Show realistic, high-quality physical objects, products, tools, or materials
-that are clearly and immediately associated with the following business field.
-The subject must be recognizable within 1–2 seconds.
+// Business Name: ${businessName}
+// Business Essence / Description: ${businessDescription}
+// Target Audience: ${targetAudience}
+// Visual Style: ${visualStyle}, ${extendedStyle}
+// Color Palette: ${colorsText}
+// Main Tagline: ${tagline}
 
-Business Description:
-${businessDescription}
+// Instructions:
+// - Translate the business description into realistic objects, products, tools, or environments
+//   that naturally represent this specific business, without providing explicit examples.
+// - The images should immediately communicate the business identity within 1–2 seconds.
+// - Premium, clean, professional, advertising-ready composition.
+// - Leave clear space for the logo and tagline.
+// - Avoid people, text, clutter, or unrelated objects.
 
-WHAT TO SHOW:
-- Only objects, materials, or environments related to the business field.
-- Studio-quality commercial photography style.
-- Realistic, premium, clean presentation.
+// Generate THREE distinct variations:
+// 1. Hero Product / Main Object Focus: Showcase the primary objects in a visually strong composition.
+// 2. Close-Up / Texture & Detail Focus: Highlight materials, textures, or details relevant to the business.
+// 3. Wide / Environment Focus: Show the environment or setting where the business operates, focusing on objects and atmosphere.
 
-BRAND FEEL (HOW IT SHOULD FEEL, NOT WHAT IS SHOWN):
-${essence}
+// Additional Notes:
+// - Strong visual hierarchy: tagline dominant, business name/logo readable.
+// - Use the color palette intentionally: backgrounds, typography, and graphic elements should feel cohesive.
+// - Clean, professional composition that appeals to the target audience.
+// - The final output must be high-resolution and advertising-ready.
+// `.trim();
+const baseVisualRules = `High-end commercial advertisement photography for a business named "${businessName}". 
+Style: ${visualStyle}, ${extendedStyle}. 
+Color Palette: ${colorsText}. 
+Mood: Professional, premium, and clean. 
+Technical: 8k resolution, photorealistic, cinematic lighting, sharp focus. 
+Strictly NO text, NO logos, NO letters, and NO people.`.trim();
 
-VISUAL STYLE:
-${visualStyle}
-Ultra high resolution, professional advertising photography, premium quality.
+const styles = [
+  // אפשרות 1: ה"גיבור" - מיקוד באובייקטים המוחשיים של העסק
+  `${baseVisualRules} 
+  Concept: A hero-shot of professional premium tools and objects representing the daily work of ${businessDescription}. 
+  Composition: Central focus on high-quality items, minimalist background with ${colorsText} accents, plenty of negative space for future text overlays.`,
 
-COLOR DIRECTION:
-Use a dominant and cohesive palette based on:
-${colorsText}
+  // אפשרות 2: האווירה - החלל והסביבה העסקית
+  `${baseVisualRules} 
+  Concept: A wide-angle interior shot of a sophisticated, modern environment related to ${businessDescription}. 
+  Composition: Architectural photography style, natural soft lighting, ${colorsText} highlights, clean and organized atmosphere that implies excellence.`,
 
-COMPOSITION:
-- Minimal, clean, and professional.
-- Clear negative space in the center or upper third.
-- The image must allow space for logo placement and the tagline:
-"${tagline}"
-
-STRICT RULES – MUST FOLLOW:
-- NO text, letters, numbers, signs, or logos inside the image.
-- NO people, faces, hands, or body parts.
-- NO abstract visuals unless they clearly support the business field.
-- NO unrelated objects.
-- Background must not be cluttered.
-- The image must visually represent the business itself, not just an emotion.
-
-FINAL GOAL:
-A realistic, advertising-ready background image that clearly matches the business
-and emotionally reflects the brand essence.
-`.trim();
-
-
-   const styles = [
-  `${baseVisualRules}
-Concept 1:
-A clean hero-style composition featuring the main business-related products or tools,
-presented in a premium, commercial advertising setup.`,
-
-  `${baseVisualRules}
-Concept 2:
-A close-up professional shot highlighting textures, materials, or details
-commonly found in this type of business.`,
-
-  `${baseVisualRules}
-Concept 3:
-A wider scene showing an elegant, minimal environment where this business operates,
-without people, focusing only on objects and atmosphere.`
+  // אפשרות 3: האיכות - תקריב אומנותי על פרטים וטקסטורות
+  `${baseVisualRules} 
+  Concept: Extreme close-up (macro) photography of textures, materials, or intricate details associated with ${businessDescription}. 
+  Composition: Artistic depth of field with beautiful bokeh, focuses on the high-quality essence using ${colorsText} color grading.`
 ];
-
 
     const results = await Promise.allSettled(
       styles.map(async (prompt, index) => {
