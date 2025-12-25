@@ -19,60 +19,82 @@ export const generateLogoImage = async (brandingData) => {
       ? colors.map(c => c.startsWith('#') ? c : `#${c}`).join(", ") 
       : "vibrant professional colors";
 
+const prompt = `
+### ROLE: PRECISION BRAND ARCHITECT
+Task: Design a professional 3D logo for "${businessName}".
+
+### 1. COLOR RIGIDITY (STRICT ENFORCEMENT)
+- **MANDATORY COLORS**: Use ONLY these HEX codes: ${colorsList}.
+- **ABSOLUTE PROHIBITION**: Do NOT use any color outside the provided list. No black (unless listed), no gray (unless listed), no red/blue variations unless they are in ${colorsList}.
+- **Shading**: Create 3D depth ONLY by using different tones and opacity of the provided colors ${colorsList}.
+- **Background**: STARK PURE WHITE (#FFFFFF) only.
+
+### 2. LOGO ARCHITECTURE
+- **Symbol**: A single, clean, 3D geometric icon representing "${businessDescription}" and "${essence}".
+- **Style**: ${visualStyle}. High-end vector aesthetic.
+- **Composition**: Centered, isolated, and floating on a white void. No floor, no table, no environment.
+
+### 3. TYPOGRAPHY
+- **Text**: "${businessName}" rendered accurately.
+- **Color**: The text MUST also be in one of the colors from ${colorsList}. 
+- **Font**: Sophisticated sans-serif, reflecting "${tone}".
+
+### 4. TECHNICAL SPECIFICATION
+- No photographic realism.
+- No textures other than smooth satin/matte.
+- The output must be a clean graphic asset, not a real-world object.
+`.trim();
     // יצירת הפרומפט - שים לב שהחלפתי את style ב-visualStyle
-//    const prompt = `
-// ### ROLE: SENIOR BRAND DESIGNER
-// Task: Create a professional, high-end 3D logo icon for "${businessName}".
+//   const prompt = `
+// ### ROLE: MASTER BRAND ARCHITECT
+// Task: Design a professional 3D vector logo for "${businessName}" that reflects its essence and tone.
 
-// ### 1. THE LOGO ICON (CENTRAL ELEMENT)
-// - **Concept**: A singular, sophisticated minimalist symbol that integrates the essence of "${essence}" with the field of "${businessDescription}".
-// - **Visual Style**: ${visualStyle}. The icon must be geometric, balanced, and perfectly centered.
-// - **Form**: Use clean lines and smooth surfaces. Focus on "Symbolic Geometry" rather than realistic objects.
-// - **Exclusion**: No backgrounds, no complex scenes, no photographic realism.
+// ### 1. SYMBOL (SHAPE INTEGRITY)
+// - Concept: Create ONE singular, recognizable 3D object that directly represents "${businessDescription}" and embodies the essence "${essence}".
+// - Mandatory Constraint: Do NOT use abstract shapes or letters alone. It must be a physical, identifiable icon related to the industry.
+// - Form: Use clean, solid 3D geometry with bold edges.
+// - Position: Center the object clearly ABOVE the text.
+// - Tone: Design should reflect the brand's tone: "${tone}".
 
-// ### 2. COLOR & LIGHTING (STRICT COMPLIANCE)
-// - **Palette**: Use ONLY the HEX colors: ${colorsList}. 
-// - **Application**: Apply these colors using smooth gradients and soft highlights to create a premium 3D "volumetric" effect.
-// - **Prohibition**: Do not introduce any secondary colors (no grays, blacks, or reds unless specified in the list).
+// ### 2. STRICT COLOR LOCK (HEX ACCURACY)
+// - Palette: Use ONLY ${colorsList}.
+// - Zero Deviation: Strictly prohibit any other colors.
+// - Lighting: Neutral white studio light only. No colored reflections or environmental lighting that distorts the HEX codes.
 
-// ### 3. MATERIAL & DEPTH
-// - **Finish**: Matte-satin texture with soft-touch edges (chamfered).
-// - **Shadow**: A very subtle, soft contact shadow on the floor to provide a "Nofach" and sense of weight.
-// - **Background**: STARK PURE WHITE (#FFFFFF) only. This is essential for a clean brand look.
+// ### 3. TEXT & LAYOUT
+// - Requirement: Render "${businessName}" exactly ONCE below the icon.
+// - Style: Use a professional, solid font matching the visual style "${visualStyle}".
+// - Prohibition: No slogans, no taglines, and no decorative letters.
 
-// ### 4. TYPOGRAPHY
-// - **Text**: Render "${businessName}" in a professional, modern sans-serif typeface below the icon.
-// - **Tone**: The font should reflect a "${tone}" vibe, suitable for the "${targetAudience}" audience.
-
-// ### FINAL QUALITY CHECK
-// Ensure the output is a clean, isolated logo on a white field. It must look like a high-end corporate identity piece, not a toy or a 3D render of a physical object.
+// ### 4. OUTPUT SPECIFICATIONS
+// - Background: Pure white (#FFFFFF) only.
+// - Finish: High-quality 3D matte.
+// - Isolation: Logo should be clean, isolated on white; no shadows, floors, or extra environment.
 // `.trim();
 
-const prompt = `
-### ROLE: MASTER BRAND ARCHITECT
-Task: Design a high-end 3D vector logo for "${businessName}" using ONLY the specified colors.
+// const prompt = `
+// ### ROLE: PRECISION GRAPHIC ENGINE
+// Task: Design a 3D vector logo based ONLY on the provided variables.
 
-### 1. THE VISUAL SYMBOL (ICON)
-- **Concept**: Create a singular, minimalist, and visually appealing 3D symbol representing "${businessDescription}" and capturing the essence: "${essence}".
-- **Style**: ${visualStyle}. Use clean, geometric 3D shapes.
-- **Position**: Place the symbol clearly ABOVE the text. 
-- **Instruction**: Ensure the symbol is a recognizable graphic icon, not a blurry effect.
+// ### 1. THE SYMBOL
+// - **Subject**: Create ONE singular 3D icon representing "${businessDescription}".
+// - **Instruction**: Do not use abstract shapes. The icon must be a recognizable, literal object from the business field.
+// - **Style**: Bold, clean geometric 3D shapes. Position clearly ABOVE the text.
 
-### 2. STRICT COLOR PALETTE (NO MIXING)
-- **MANDATORY COLORS**: Use ONLY these HEX codes: ${colorsList}.
-- **APPLICATION**: The logo must be composed ONLY of these exact colors. Apply them as SOLID 3D layers.
-- **NO EXTRANEOUS COLORS**: Do not add purple, yellow, or any color not in the list ${colorsList}. 
-- **NO SOFT GRADIENTS**: Use the colors as distinct, solid tones to define the 3D parts and shadows.
+// ### 2. COLOR LOCK (NO DEVIATION)
+// - **Palette**: Use ONLY these HEX codes: ${colorsList}.
+// - **Strict Prohibition**: Absolutely NO other colors allowed. No pink, blue, or yellow unless in the list.
+// - **Lighting**: Neutral white studio light only. Prohibit environmental reflections that alter the original HEX shades.
 
-### 3. TYPOGRAPHY & CLEANLINESS
-- **TEXT**: Render ONLY "${businessName}" accurately below the icon.
-- **TEXT COLOR**: Use one of the HEX codes from ${colorsList}.
-- **STRICT PROHIBITION**: No taglines, no slogans, no small text, and no extra decorative letters.
+// ### 3. TEXT & LAYOUT
+// - **Text**: Render ONLY "${businessName}" accurately.
+// - **Count**: Render the text ONCE. No duplication, no shadows that create new colors.
+// - **Typography**: Clean typeface aligned with "${essence}".
 
-### 4. BACKGROUND & ISOLATION
-- **BACKGROUND**: STARK PURE WHITE (#FFFFFF) only. 
-- **FINISH**: High-quality 3D matte finish. Isolated on a white void with no environment or floor.
-`.trim();
+// ### 4. OUTPUT SPECS
+// - **Background**: STARK PURE WHITE (#FFFFFF) only.
+// - **Finish**: High-quality 3D matte. Isolated on white void with no floor or environment.
+// `.trim();
     const cleanPrompt = prompt
       .replace(/[\[\]]/g, '')
       .replace(/["']/g, '')
