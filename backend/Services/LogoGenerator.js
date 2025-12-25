@@ -19,32 +19,9 @@ export const generateLogoImage = async (brandingData) => {
       ? colors.map(c => c.startsWith('#') ? c : `#${c}`).join(", ") 
       : "vibrant professional colors";
 
-const prompt = `
-### ROLE: PRECISION BRAND ARCHITECT
-Task: Design a professional 3D logo for "${businessName}".
 
-### 1. COLOR RIGIDITY (STRICT ENFORCEMENT)
-- **MANDATORY COLORS**: Use ONLY these HEX codes: ${colorsList}.
-- **ABSOLUTE PROHIBITION**: Do NOT use any color outside the provided list. No black (unless listed), no gray (unless listed), no red/blue variations unless they are in ${colorsList}.
-- **Shading**: Create 3D depth ONLY by using different tones and opacity of the provided colors ${colorsList}.
-- **Background**: STARK PURE WHITE (#FFFFFF) only.
 
-### 2. LOGO ARCHITECTURE
-- **Symbol**: A single, clean, 3D geometric icon representing "${businessDescription}" and "${essence}".
-- **Style**: ${visualStyle}. High-end vector aesthetic.
-- **Composition**: Centered, isolated, and floating on a white void. No floor, no table, no environment.
-
-### 3. TYPOGRAPHY
-- **Text**: "${businessName}" rendered accurately.
-- **Color**: The text MUST also be in one of the colors from ${colorsList}. 
-- **Font**: Sophisticated sans-serif, reflecting "${tone}".
-
-### 4. TECHNICAL SPECIFICATION
-- No photographic realism.
-- No textures other than smooth satin/matte.
-- The output must be a clean graphic asset, not a real-world object.
-`.trim();
-    // יצירת הפרומפט - שים לב שהחלפתי את style ב-visualStyle
+      
 //   const prompt = `
 // ### ROLE: MASTER BRAND ARCHITECT
 // Task: Design a professional 3D vector logo for "${businessName}" that reflects its essence and tone.
@@ -72,29 +49,33 @@ Task: Design a professional 3D logo for "${businessName}".
 // - Isolation: Logo should be clean, isolated on white; no shadows, floors, or extra environment.
 // `.trim();
 
-// const prompt = `
-// ### ROLE: PRECISION GRAPHIC ENGINE
-// Task: Design a 3D vector logo based ONLY on the provided variables.
+const prompt = `
+### ROLE: PRECISION GRAPHIC ENGINE
+Task: Design a 3D vector logo based ONLY on the provided variables.
 
-// ### 1. THE SYMBOL
-// - **Subject**: Create ONE singular 3D icon representing "${businessDescription}".
-// - **Instruction**: Do not use abstract shapes. The icon must be a recognizable, literal object from the business field.
-// - **Style**: Bold, clean geometric 3D shapes. Position clearly ABOVE the text.
+### 1. THE SYMBOL
+- **Subject**: Create ONE singular 3D icon representing "${businessDescription}".
+- **Instruction**: Do not use abstract shapes. The icon must be a recognizable, literal object from the business field.
+- **Style**: Bold, clean geometric 3D shapes. Position clearly ABOVE the text.
 
-// ### 2. COLOR LOCK (NO DEVIATION)
-// - **Palette**: Use ONLY these HEX codes: ${colorsList}.
-// - **Strict Prohibition**: Absolutely NO other colors allowed. No pink, blue, or yellow unless in the list.
-// - **Lighting**: Neutral white studio light only. Prohibit environmental reflections that alter the original HEX shades.
+### 2. COLOR LOCK (NO DEVIATION)
+- **Palette**: Use ONLY these HEX codes: ${colorsList}.
+- **Strict Prohibition**: Absolutely NO other colors allowed. No pink, blue, or yellow unless in the list.
+- **Lighting**: Neutral white studio light only. Prohibit environmental reflections that alter the original HEX shades.
 
-// ### 3. TEXT & LAYOUT
-// - **Text**: Render ONLY "${businessName}" accurately.
-// - **Count**: Render the text ONCE. No duplication, no shadows that create new colors.
-// - **Typography**: Clean typeface aligned with "${essence}".
+### 3. TEXT & LAYOUT
+- **Text**: Render ONLY "${businessName}" accurately.
+- **Count**: Render the text ONCE. No duplication, no shadows that create new colors.
+- **Typography**: Clean typeface aligned with "${essence}".
 
-// ### 4. OUTPUT SPECS
-// - **Background**: STARK PURE WHITE (#FFFFFF) only.
-// - **Finish**: High-quality 3D matte. Isolated on white void with no floor or environment.
-// `.trim();
+### 4. OUTPUT SPECS
+- **Background**: STARK PURE WHITE (#FFFFFF) only.
+- **Finish**: High-quality 3D matte. Isolated on white void with no floor or environment.
+`.trim();
+
+
+
+
     const cleanPrompt = prompt
       .replace(/[\[\]]/g, '')
       .replace(/["']/g, '')

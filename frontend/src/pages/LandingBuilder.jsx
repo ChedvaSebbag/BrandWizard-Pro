@@ -226,112 +226,163 @@
 //     </div>
 //   );
 // }
+
+
+
 import { useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 export default function LandingBuilder() {
   const navigate = useNavigate();
   const { state } = useLocation();
-  
-  // חילוץ חכם: אם באנו מהפוסטרים הנתונים נמצאים ישירות ב-state, וגם אם באנו ישר מהלוגו
-  const brandingData = state; 
+  const brandingData = state;
 
-  const [formData, setFormData] = useState({ services: "", phone: "", email: "", ctaType: "contact" });
+  const [formData, setFormData] = useState({
+    services: "",
+    phone: "",
+    email: "",
+    ctaType: "contact",
+  });
   const [loading, setLoading] = useState(false);
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
-  //   setLoading(true);
-  //   try {
-  //     const res = await fetch("http://localhost:5000/api/landing-page", {
-  //       method: "POST",
-  //       headers: { "Content-Type": "application/json" },
-  //       body: JSON.stringify({ 
-  //         ...brandingData, 
-  //         ...formData, 
-  //         services: formData.services.split(",").map(s => s.trim()).filter(Boolean) 
-  //       }),
-  //     });
-      
-  //     const aiData = await res.json();
-      
-  //     // העברת הנתונים המשולבים (תוכן AI + לוגו וצבעים מקוריים) ל-Preview
-  //     navigate("/landing-preview", { 
-  //       state: { 
-  //         landingData: { 
-  //           ...aiData,       
-  //           ...brandingData, 
-  //           contactInfo: formData 
-  //         } 
-  //       } 
-  //     });
-  //   } catch (err) { 
-  //     alert("שגיאה ביצירת הדף"); 
-  //   } finally { 
-  //     setLoading(false); 
-  //   }
-  // };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setLoading(true);
+    try {
+      const res = await fetch("http://localhost:5000/api/landing-page", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          ...brandingData,
+          ...formData,
+          services: formData.services
+            .split(",")
+            .map((s) => s.trim())
+            .filter(Boolean),
+        }),
+      });
 
-  // בתוך LandingBuilder.jsx - פונקציית handleSubmit
-// בתוך LandingBuilder.jsx - פונקציית handleSubmit
-const handleSubmit = async (e) => {
-  e.preventDefault();
-  setLoading(true);
-  try {
-    const res = await fetch("http://localhost:5000/api/landing-page", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ 
-        ...brandingData, 
-        ...formData, 
-        services: formData.services.split(",").map(s => s.trim()).filter(Boolean) 
-      }),
-    });
-    
-    const aiData = await res.json();
-    
-    // סנכרון סופי של המבנה עבור ה-Preview
-    navigate("/landing-preview", { 
-      state: { 
-        landingData: { 
-          ...brandingData,      // לוגו וצבעים
-          ...aiData,            // תוכן ה-AI (hero, about, services)
-          contactInfo: formData // פרטי התקשרות מהטופס
-        } 
-      } 
-    });
-  } catch (err) { 
-    alert("שגיאה ביצירת התוכן"); 
-  } finally { 
-    setLoading(false); 
-  }
-};
+      const aiData = await res.json();
+
+      navigate("/landing-preview", {
+        state: {
+          landingData: {
+            ...brandingData,
+            ...aiData,
+            contactInfo: formData,
+          },
+        },
+      });
+    } catch (err) {
+      alert("שגיאה ביצירת התוכן");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
-    <div className="max-w-4xl mx-auto px-6 py-14 text-right" dir="rtl">
-      {brandingData?.logo && (
-        <img src={`data:image/png;base64,${brandingData.logo}`} alt="Logo" className="h-12 mb-4 mx-auto opacity-50" />
-      )}
-      <h1 className="text-3xl font-bold mb-8">פרטים אחרונים לדף עבור {brandingData?.businessName}</h1>
-      <form onSubmit={handleSubmit} className="grid gap-6">
-        <textarea 
-          placeholder="השירותים שלנו (מופרד בפסיקים)" 
-          onChange={(e)=>setFormData({...formData, services: e.target.value})} 
-          className="p-4 border rounded-xl" 
-          required 
-        />
-        <div className="grid grid-cols-2 gap-4">
-          <input placeholder="טלפון" onChange={(e)=>setFormData({...formData, phone: e.target.value})} className="p-4 border rounded-xl" />
-          <input placeholder="אימייל" onChange={(e)=>setFormData({...formData, email: e.target.value})} className="p-4 border rounded-xl" />
+    <div
+      className="min-h-screen bg-gradient-to-b from-slate-50 to-slate-100 px-4 py-24 text-right"
+      dir="rtl"
+    >
+      <div className="max-w-3xl mx-auto">
+        {/* HEADER */}
+        <div className="text-center mb-16">
+          {brandingData?.logo && (
+            <img
+              src={`data:image/png;base64,${brandingData.logo}`}
+              alt="Logo"
+              className="h-14 mx-auto mb-6 opacity-80"
+            />
+          )}
+          <h1 className="text-4xl font-black mb-4">
+            עוד רגע והדף שלך מוכן
+          </h1>
+          <p className="text-slate-600 text-lg max-w-xl mx-auto">
+            נכניס פרטים אחרונים —  
+            וה-AI יבנה עבורך דף נחיתה מדויק, ממיר ומעוצב
+          </p>
         </div>
-        <select onChange={(e)=>setFormData({...formData, ctaType: e.target.value})} className="p-4 border rounded-xl bg-white">
-          <option value="contact">צור קשר</option>
-          <option value="whatsapp">שלח הודעת וואטסאפ</option>
-          <option value="call">התקשר עכשיו</option>
-        </select>
-        <button type="submit" disabled={loading} className="py-5 bg-black text-white rounded-2xl font-bold text-xl">
-          {loading ? "מייצר תוכן..." : "צור דף נחיתה ✨"}
-        </button>
-      </form>
+
+        {/* FORM CARD */}
+        <form
+          onSubmit={handleSubmit}
+          className="bg-white rounded-[2.5rem] shadow-2xl p-10 grid gap-8"
+        >
+          {/* SERVICES */}
+          <div>
+            <label className="block text-sm font-bold mb-2 text-slate-700">
+              השירותים שלך
+            </label>
+            <textarea
+              placeholder="לדוגמה: עיצוב גרפי, מיתוג, בניית אתרים"
+              onChange={(e) =>
+                setFormData({ ...formData, services: e.target.value })
+              }
+              className="w-full min-h-[120px] p-5 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-slate-900 focus:outline-none"
+              required
+            />
+            <p className="text-xs text-slate-500 mt-2">
+              מופרד בפסיקים – כל שירות יהפוך לבלוק בדף
+            </p>
+          </div>
+
+          {/* CONTACT */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div>
+              <label className="block text-sm font-bold mb-2 text-slate-700">
+                טלפון
+              </label>
+              <input
+                placeholder="050-0000000"
+                onChange={(e) =>
+                  setFormData({ ...formData, phone: e.target.value })
+                }
+                className="w-full p-5 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-slate-900 focus:outline-none"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-bold mb-2 text-slate-700">
+                אימייל
+              </label>
+              <input
+                placeholder="hello@yourbusiness.com"
+                onChange={(e) =>
+                  setFormData({ ...formData, email: e.target.value })
+                }
+                className="w-full p-5 rounded-2xl border border-slate-200 focus:ring-2 focus:ring-slate-900 focus:outline-none"
+              />
+            </div>
+          </div>
+
+          {/* CTA TYPE */}
+          <div>
+            <label className="block text-sm font-bold mb-2 text-slate-700">
+              סוג קריאה לפעולה
+            </label>
+            <select
+              onChange={(e) =>
+                setFormData({ ...formData, ctaType: e.target.value })
+              }
+              className="w-full p-5 rounded-2xl border border-slate-200 bg-white focus:ring-2 focus:ring-slate-900 focus:outline-none"
+            >
+              <option value="contact">צור קשר</option>
+              <option value="whatsapp">שלח הודעת וואטסאפ</option>
+              <option value="call">התקשר עכשיו</option>
+            </select>
+          </div>
+
+          {/* SUBMIT */}
+          <button
+            type="submit"
+            disabled={loading}
+            className="mt-6 w-full py-6 rounded-full bg-slate-900 text-white text-xl font-black shadow-xl transition-all hover:scale-[1.02] disabled:opacity-60"
+          >
+            {loading ? "ה-AI בונה את הדף שלך..." : "צור דף נחיתה"}
+          </button>
+        </form>
+      </div>
     </div>
   );
 }
