@@ -192,19 +192,23 @@ import { useState } from "react";
 // פונקציות עזר
 function getPalette(d) {
   const palette = d?.colors || d?.color_palette || [];
-  const [c1, c2, c3] = palette.length >= 3 ? palette : ["#0f172a", "#14b8a6", "#f59e0b"];
+  const [c1, c2, c3] =
+    palette.length >= 3 ? palette : ["#0f172a", "#14b8a6", "#f59e0b"];
   return { c1, c2, c3 };
 }
 
 function getLogoSrc(d) {
   const raw = d?.logo || d?.brandLogo || "";
   if (!raw) return "";
-  return raw.startsWith("data:image/") ? raw : `data:image/png;base64,${raw}`;
+  return raw.startsWith("data:image/")
+    ? raw
+    : `data:image/png;base64,${raw}`;
 }
 
 export default function LandingPreview() {
   const { state } = useLocation();
   const d = state?.landingData;
+
 
   const [isPublishing, setIsPublishing] = useState(false);
   const [publishedUrl, setPublishedUrl] = useState("");
@@ -271,18 +275,20 @@ export default function LandingPreview() {
       });
       const data = await res.json();
       setPublishedUrl(data.url);
-    } catch (err) {
+    } catch {
       alert("שגיאה בפרסום");
     } finally {
       setIsPublishing(false);
     }
   };
 
+
   const handleDownload = () => {
     const blob = new Blob([buildHtml()], { type: "text/html" });
     const url = URL.createObjectURL(blob);
     const link = document.createElement("a");
     link.href = url;
+    link.download = "index.html";
     link.download = "index.html";
     document.body.appendChild(link);
     link.click();
@@ -304,17 +310,49 @@ export default function LandingPreview() {
         </div>
       </nav>
 
-      <div className="max-w-5xl mx-auto my-10 bg-white shadow-2xl rounded-[50px] overflow-hidden border p-10 md:p-16">
+      {/* ===== CONTENT ===== */}
+      <div className="max-w-5xl mx-auto my-10 bg-white rounded-[40px] p-10 shadow-xl">
+        
+        {/* ===== תוצאה אחרי פרסום ===== */}
         {publishedUrl && (
-          <div className="mb-10 p-6 bg-emerald-50 border-2 border-emerald-500 rounded-3xl text-center">
-            <p className="font-bold text-emerald-800 mb-2">🎉 האתר שלך באוויר!</p>
-            <a href={publishedUrl} target="_blank" rel="noreferrer" className="text-blue-600 underline font-mono">{publishedUrl}</a>
+          <div className="mb-10 p-6 bg-emerald-50 border-2 border-emerald-500 rounded-3xl text-center space-y-4">
+            <p className="font-bold text-emerald-800">
+              🎉 האתר שלך באוויר!
+            </p>
+
+            <a
+              href={publishedUrl}
+              target="_blank"
+              rel="noreferrer"
+              className="block text-blue-600 underline font-mono"
+            >
+              {publishedUrl}
+            </a>
+
+            {/* 👇 הכפתור החדש */}
+            <a
+              href="https://domains.squarespace.com/google-domains/?channel=bd&subchannel=google-kb-9-10-2024&source=google_domain_referral&utm_source=google_domain_referral&utm_medium=bd&utm_content=google-kb-9-10-2024"
+              target="_blank"
+              rel="noreferrer"
+              className="inline-block bg-slate-900 hover:bg-slate-800 text-white px-8 py-3 rounded-full font-bold transition"
+            >
+              🌐 רוצה דומיין משלך? קנה עכשיו
+            </a>
+
+            <p className="text-sm text-gray-500">
+              חבר דומיין אישי והפוך את האתר למקצועי באמת
+            </p>
           </div>
         )}
 
-        <header className="flex justify-between items-center mb-16 border-b pb-6">
-          <div className="h-16">{logoSrc && <img src={logoSrc} className="h-full object-contain" alt="לוגו" />}</div>
-          <div className="text-2xl font-bold" style={{ color: c2 }}>{phone}</div>
+        {/* ===== תצוגת האתר ===== */}
+        <header className="flex justify-between items-center mb-10">
+          {logoSrc && (
+            <img src={logoSrc} alt="לוגו" className="h-16" />
+          )}
+          <div className="text-2xl font-bold" style={{ color: c2 }}>
+            {phone}
+          </div>
         </header>
 
         <section className="text-center mb-20 py-16 px-6 rounded-[40px]" style={{ background: `${c2}10` }}>
@@ -348,3 +386,4 @@ export default function LandingPreview() {
     </div>
   );
 }
+
